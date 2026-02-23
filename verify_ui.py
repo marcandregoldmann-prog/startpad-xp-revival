@@ -1,38 +1,33 @@
 from playwright.sync_api import sync_playwright
-import time
 
-def verify_ui():
+def run():
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=True)
-        page = browser.new_page()
+        context = browser.new_context(viewport={'width': 375, 'height': 812}) # Mobile viewport as it's a mobile-first app
+        page = context.new_page()
 
-        try:
-            # Navigate to Start Page
-            print("Navigating to http://localhost:8081/")
-            page.goto("http://localhost:8081/", timeout=60000)
-            time.sleep(5) # Wait for animations
-            page.screenshot(path="verify_start_page.png")
-            print("Screenshot saved: verify_start_page.png")
+        # Start Page
+        print("Navigating to Start Page...")
+        page.goto("http://localhost:8082/")
+        page.wait_for_timeout(2000) # Wait for animations
+        page.screenshot(path="verify_start_page.png")
+        print("Captured Start Page.")
 
-            # Navigate to Tasks Page
-            print("Navigating to http://localhost:8081/tasks")
-            page.goto("http://localhost:8081/tasks", timeout=60000)
-            time.sleep(2)
-            page.screenshot(path="verify_tasks_page.png")
-            print("Screenshot saved: verify_tasks_page.png")
+        # Tasks Page
+        print("Navigating to Tasks Page...")
+        page.goto("http://localhost:8082/tasks")
+        page.wait_for_timeout(2000)
+        page.screenshot(path="verify_tasks_page.png")
+        print("Captured Tasks Page.")
 
-            # Navigate to Wissen Page
-            print("Navigating to http://localhost:8081/wissen")
-            page.goto("http://localhost:8081/wissen", timeout=60000)
-            time.sleep(2)
-            page.screenshot(path="verify_wissen_page.png")
-            print("Screenshot saved: verify_wissen_page.png")
+        # Wissen Page
+        print("Navigating to Wissen Page...")
+        page.goto("http://localhost:8082/wissen")
+        page.wait_for_timeout(2000)
+        page.screenshot(path="verify_wissen_page.png")
+        print("Captured Wissen Page.")
 
-        except Exception as e:
-            print(f"Error: {e}")
-            page.screenshot(path="error.png")
-        finally:
-            browser.close()
+        browser.close()
 
 if __name__ == "__main__":
-    verify_ui()
+    run()
