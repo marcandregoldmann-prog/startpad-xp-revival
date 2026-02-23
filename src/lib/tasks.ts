@@ -2,6 +2,13 @@ import { generateId } from './decisions';
 
 export type TaskCategory = 'Haushalt' | 'Gesundheit' | 'Routine' | 'Sonstiges';
 export type TaskRepeat = 'täglich' | 'wöchentlich' | 'manuell';
+export type TaskPriority = 'hoch' | 'mittel' | 'niedrig';
+
+export interface Subtask {
+  id: string;
+  title: string;
+  completed: boolean;
+}
 
 export interface Task {
   id: string;
@@ -10,6 +17,11 @@ export interface Task {
   xp: number;
   repeat: TaskRepeat;
   createdAt: string;
+  priority?: TaskPriority;
+  dueDate?: string;
+  subtasks?: Subtask[];
+  isArchived?: boolean;
+  note?: string;
 }
 
 export interface TaskCompletion {
@@ -45,12 +57,28 @@ export function saveTask(task: Task): void {
   localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
 }
 
+export function updateTask(id: string, updates: Partial<Task>): void {
+  const tasks = loadTasks();
+  const index = tasks.findIndex(t => t.id === id);
+  if (index !== -1) {
+    tasks[index] = { ...tasks[index], ...updates };
+    localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
+  }
+}
+
 export function deleteTask(id: string): void {
   const tasks = loadTasks().filter(t => t.id !== id);
   localStorage.setItem(TASKS_KEY, JSON.stringify(tasks));
 }
 
-export function createTask(title: string, category: TaskCategory, xp: number, repeat: TaskRepeat): Task {
+export function createTask(
+  title: string,
+  category: TaskCategory,
+  xp: number,
+  repeat: TaskRepeat,
+  priority: TaskPriority = 'mittel',
+  dueDate?: string
+): Task {
   return {
     id: generateId(),
     title,
@@ -58,6 +86,11 @@ export function createTask(title: string, category: TaskCategory, xp: number, re
     xp,
     repeat,
     createdAt: new Date().toISOString(),
+    priority,
+    dueDate,
+    subtasks: [],
+    isArchived: false,
+    note: '',
   };
 }
 
@@ -86,11 +119,26 @@ export function isTaskCompletedToday(taskId: string, completions: TaskCompletion
 export function getTodaysTasks(tasks: Task[]): Task[] {
   const today = new Date();
   const dayOfWeek = today.getDay();
+  const todayStr = getToday();
   
   return tasks.filter(task => {
+    if (task.isArchived) return false;
+
+    // Priority sorting logic should be done by caller, this just filters valid tasks for today
+
+    // If specific due date:
+    if (task.dueDate) {
+      // Show if due today or overdue
+      if (task.dueDate <= todayStr) return true;
+      // If future date, only show if repeat rules match?
+      // Usually due date overrides repeat.
+      // If manually set due date in future, hide until then.
+      return false;
+    }
+
     if (task.repeat === 'täglich') return true;
-    if (task.repeat === 'wöchentlich') return dayOfWeek === 1;
-    return true;
+    if (task.repeat === 'wöchentlich') return dayOfWeek === 1; // Monday
+    return true; // Default manual (no date) always visible
   });
 }
 
@@ -98,7 +146,7 @@ export function loadStats(): TaskStats {
   try {
     const data = localStorage.getItem(STATS_KEY);
     if (data) return JSON.parse(data);
-  } catch {}
+  } catch { /* ignore */ }
   return {
     totalXP: 0,
     level: 1,
