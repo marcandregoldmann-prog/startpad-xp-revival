@@ -23,7 +23,7 @@ export function loadLinks(): LinkGroup[] {
   try {
     const data = localStorage.getItem(LINKS_KEY);
     if (data) return JSON.parse(data);
-  } catch {}
+  } catch { /* ignore */ }
   return getDefaultLinks();
 }
 
