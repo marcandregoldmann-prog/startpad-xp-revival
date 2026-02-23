@@ -30,7 +30,9 @@ const TaskItem = ({ task, completed, onComplete, onDelete, onArchive, onUpdate }
   const [newSubtask, setNewSubtask] = useState('');
 
   const handleSubtaskToggle = (subtaskId: string) => {
-    const updated = task.subtasks?.map(s => s.id === subtaskId ? { ...s, completed: !s.completed } : s) || [];
+    // subtasks might be undefined if not initialized
+    const currentSubtasks = task.subtasks || [];
+    const updated = currentSubtasks.map(s => s.id === subtaskId ? { ...s, completed: !s.completed } : s);
     onUpdate(task.id, { subtasks: updated });
   };
 

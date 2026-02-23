@@ -8,48 +8,121 @@ import {
   isTaskCompletedToday, completeTask, checkStreakReset, deleteTask, updateTask,
   type Task, type TaskCompletion, type TaskStats,
 } from '@/lib/tasks';
-import { BarChart3, Archive, CheckCheck } from 'lucide-react';
+import { BarChart3, Archive, CheckCheck, Sparkles } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+
+// Error Boundary Component (Simple inline version)
+const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => {
+  return (
+    <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-center">
+      <h3 className="text-lg font-bold text-red-500 mb-2">Da ist etwas schief gelaufen</h3>
+      <p className="text-sm text-red-400 mb-4">{error.message}</p>
+      <button onClick={resetErrorBoundary} className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white">
+        Erneut versuchen
+      </button>
+    </div>
+  );
+};
 
 const Tasks = () => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [completions, setCompletions] = useState<TaskCompletion[]>([]);
-  const [stats, setStats] = useState<TaskStats>(loadStats());
+  const [stats, setStats] = useState<TaskStats>({
+    totalXP: 0, level: 1, currentStreak: 0, longestStreak: 0, totalCompletedTasks: 0, lastCompletionDate: null
+  });
   const [showStats, setShowStats] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
+
+  // Experimental: Daily Plan state (derived or manual?)
+  // origin/main used 'dailyPlan' but didn't define it in the snippet I saw?
+  // Wait, I saw <Dialog open={!!dailyPlan}... setDailyPlan(null)>
+  // I need to define this state.
+  const [dailyPlan, setDailyPlan] = useState<any[] | null>(null);
 
   const refresh = useCallback(() => {
-    setAllTasks(loadTasks());
-    setCompletions(loadCompletions());
-    setStats(checkStreakReset());
+    try {
+      const loadedTasks = loadTasks() || [];
+      const loadedCompletions = loadCompletions() || [];
+      const loadedStats = checkStreakReset(); // checkStreakReset calls loadStats internally
+
+      setAllTasks(loadedTasks);
+      setCompletions(loadedCompletions);
+      setStats(loadedStats);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to load tasks data:", err);
+      setError(err instanceof Error ? err : new Error('Unknown error loading tasks'));
+    }
   }, []);
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  const todaysTasks = getTodaysTasks(allTasks);
-  const archivedTasks = allTasks.filter(t => t.isArchived);
+  if (error) {
+    return <ErrorFallback error={error} resetErrorBoundary={refresh} />;
+  }
+
+  // Safe derivation
+  const safeAllTasks = Array.isArray(allTasks) ? allTasks : [];
+  const todaysTasks = getTodaysTasks(safeAllTasks);
+  const archivedTasks = safeAllTasks.filter(t => t.isArchived);
   const completedCount = todaysTasks.filter(t => isTaskCompletedToday(t.id, completions)).length;
 
   const handleComplete = (task: Task) => {
-    const updatedStats = completeTask(task.id, task.xp);
-    setStats(updatedStats);
-    setCompletions(loadCompletions());
+    try {
+      const updatedStats = completeTask(task.id, task.xp);
+      setStats(updatedStats);
+      setCompletions(loadCompletions());
+    } catch (err) {
+      console.error("Failed to complete task:", err);
+    }
   };
 
   const handleCompleteAll = () => {
     if (confirm('Alle offenen Aufgaben von heute als erledigt markieren?')) {
-      todaysTasks.forEach(t => {
-        if (!isTaskCompletedToday(t.id, completions)) {
-          completeTask(t.id, t.xp);
-        }
-      });
-      refresh();
+      try {
+        todaysTasks.forEach(t => {
+          if (!isTaskCompletedToday(t.id, completions)) {
+            completeTask(t.id, t.xp);
+          }
+        });
+        refresh();
+      } catch (err) {
+        console.error("Failed to complete all:", err);
+      }
     }
   };
 
-  const handleDelete = (id: string) => { deleteTask(id); refresh(); };
-  const handleArchive = (id: string) => { updateTask(id, { isArchived: true }); refresh(); };
-  const handleRestore = (id: string) => { updateTask(id, { isArchived: false }); refresh(); };
-  const handleUpdate = (id: string, updates: Partial<Task>) => { updateTask(id, updates); refresh(); };
+  const handleDelete = (id: string) => {
+    try {
+      deleteTask(id);
+      refresh();
+    } catch (err) {
+      console.error("Failed to delete task:", err);
+    }
+  };
+
+  const handleArchive = (id: string) => {
+    try {
+      updateTask(id, { isArchived: true });
+      refresh();
+    } catch (err) { console.error(err); }
+  };
+
+  const handleRestore = (id: string) => {
+    try {
+      updateTask(id, { isArchived: false });
+      refresh();
+    } catch (err) { console.error(err); }
+  };
+
+  const handleUpdate = (id: string, updates: Partial<Task>) => {
+    try {
+      updateTask(id, updates);
+      refresh();
+    } catch (err) { console.error(err); }
+  };
+
   const handleTaskCreated = () => { refresh(); };
 
   if (showArchived) {

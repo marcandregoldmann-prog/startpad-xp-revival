@@ -6,7 +6,7 @@ interface HistoryListProps {
   onRefresh: () => void;
 }
 
-const HistoryList = ({ decisions, onRefresh }: HistoryListProps) => {
+const HistoryList = ({ decisions }: HistoryListProps) => {
   if (decisions.length === 0) {
     return (
       <div className="rounded-2xl border border-dashed border-white/10 bg-card/30 p-8 text-center animate-in zoom-in-95">

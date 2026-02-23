@@ -18,17 +18,21 @@ const WissenCard = ({ entry, onUpdate }: WissenCardProps) => {
     'Abgebrochen': 'text-rose-400 bg-rose-400/10 border-rose-400/20'
   };
 
+  const statusColorClass = statusColors[entry.status] || statusColors['Geplant'];
+  const statusBorderClass = statusColorClass.split(' ').pop() || 'border-white/5';
+  const statusBadgeClass = statusColorClass.split(' border')[0];
+
   const handleStatusChange = (newStatus: WissenStatus) => {
     updateWissenEntry(entry.id, { status: newStatus });
     onUpdate();
   };
 
   return (
-    <div className={`group relative rounded-2xl border bg-card p-5 transition-all duration-300 hover:shadow-lg hover:shadow-black/20 ${statusColors[entry.status].split(' ').pop()}`}>
+    <div className={`group relative rounded-2xl border bg-card p-5 transition-all duration-300 hover:shadow-lg hover:shadow-black/20 ${statusBorderClass}`}>
       <div className="flex items-start justify-between gap-3">
         <div className="flex-1 min-w-0 cursor-pointer" onClick={() => setShowDetails(!showDetails)}>
           <div className="flex items-center gap-2 mb-1.5">
-            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${statusColors[entry.status].split(' border')[0]}`}>
+            <span className={`px-2 py-0.5 rounded-md text-[10px] font-bold uppercase tracking-wider ${statusBadgeClass}`}>
               {entry.status}
             </span>
             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
@@ -81,8 +85,20 @@ export const WissenCreator = ({ onCreated }: { onCreated: () => void }) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    // Use factory function to ensure all fields (id, dates) are populated
-    const newEntry = createWissenEntry(title.trim(), category, status, notes.trim());
+    // Correctly match the signature:
+    // createWissenEntry(title, type, rating, tags, url, notes, category, status, difficulty)
+    // We pass defaults for the missing UI fields to prevent breaking the function call.
+    const newEntry = createWissenEntry(
+      title.trim(),
+      'Sonstiges', // Default Type
+      0,           // Default Rating
+      [],          // Default Tags
+      '',          // Default URL
+      notes.trim(),
+      category,
+      status
+      // difficulty is optional
+    );
     saveWissenEntry(newEntry);
 
     setTitle(''); setNotes(''); setIsAdding(false);

@@ -13,6 +13,7 @@ import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 import { CommandPalette } from "./components/CommandPalette";
 import { useEffect } from "react";
+import FocusPage from "./pages/FocusPage";
 
 const queryClient = new QueryClient();
 
@@ -44,13 +45,6 @@ const AppLayout = () => {
     );
   }
 
-  useEffect(() => {
-    const savedAccent = localStorage.getItem('clearmind-accent');
-    if (savedAccent) {
-      document.documentElement.style.setProperty('--accent', savedAccent);
-    }
-  }, []);
-
   return (
     <div className="min-h-screen bg-background font-sans transition-colors duration-300">
       <CommandPalette />
@@ -78,19 +72,19 @@ const AppLayout = () => {
         </Routes>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-10 bg-background/90 backdrop-blur-md pt-2 pb-6 border-t border-border/40 transition-colors duration-300">
+      <nav className="fixed bottom-0 left-0 right-0 z-10 bg-background/90 backdrop-blur-md pt-2 pb-6 border-t border-white/5">
         <div className="mx-auto max-w-lg flex items-center justify-around px-6">
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
             return (
               <button key={item.path} onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all duration-300 ${
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-300 ${
                   isActive
-                    ? 'bg-accent text-accent-foreground font-medium shadow-lg shadow-accent/25'
-                    : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
+                    ? 'bg-accent text-white font-medium shadow-lg shadow-accent/25'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 }`}>
                 <item.icon className={`h-5 w-5 ${isActive ? 'fill-current' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
-                <span className={`text-[9px] tracking-wide uppercase ${isActive ? 'opacity-100' : 'opacity-70'}`}>{item.label}</span>
+                {isActive && <span className="text-xs tracking-wide uppercase">{item.label}</span>}
               </button>
             );
           })}

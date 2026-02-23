@@ -19,7 +19,7 @@ const StatsCard = ({ stats }: StatsCardProps) => {
             <Target className="h-4 w-4" />
             <span className="text-[10px] font-bold uppercase tracking-wide">Gesamt</span>
           </div>
-          <p className="text-2xl font-bold text-foreground">{stats.completedTasks}</p>
+          <p className="text-2xl font-bold text-foreground">{stats.totalCompletedTasks}</p>
           <p className="text-[10px] text-muted-foreground">Aufgaben erledigt</p>
         </div>
 

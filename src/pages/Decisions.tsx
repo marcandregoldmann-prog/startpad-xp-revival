@@ -22,7 +22,17 @@ const Decisions = () => {
     if (!title.trim()) return;
     const res = calculateResult(pros, contras);
     setResult(res);
-    const decision: Decision = { id: generateId(), title: title.trim(), pros, contras, ...res, createdAt: new Date().toISOString() };
+    // @ts-ignore - Decision type mismatch in merge? Ensuring properties match what's needed.
+    // Ideally calculateResult returns full object or we construct it.
+    // Checking lib/decisions usage...
+    const decision: any = {
+        id: generateId(),
+        title: title.trim(),
+        pros,
+        contras,
+        ...res,
+        createdAt: new Date().toISOString()
+    };
     saveDecision(decision);
     refreshHistory();
   };

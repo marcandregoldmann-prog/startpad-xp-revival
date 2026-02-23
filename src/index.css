@@ -1,8 +1,8 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 @layer base {
   :root {
@@ -155,9 +155,16 @@
     @apply border-border;
   }
 
+  html {
+    overflow-y: scroll; /* Ensure scrollbar is always handled correctly */
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    /* Ensure body can grow and scroll */
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   h1, h2, h3 {
@@ -186,6 +193,15 @@
   /* Gradient for Tageskompass */
   .bg-gradient-tageskompass {
     background: linear-gradient(135deg, #E0B3FF 0%, #AEEEEE 50%, #FFB380 100%);
+  }
+
+  /* Utility for hiding scrollbar but keeping functionality */
+  .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+      display: none;
   }
 }
 
