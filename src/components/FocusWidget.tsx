@@ -5,7 +5,6 @@ import { addXP } from '@/lib/tasks';
 import { waterGarden } from '@/lib/garden';
 import { playNoise, stopNoise, NoiseType } from '@/lib/audio';
 import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import { useNavigate } from 'react-router-dom';
 
 const FocusWidget = () => {
@@ -59,6 +58,7 @@ const FocusWidget = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetDuration]);
 
+  // Audio effect
   useEffect(() => {
     if (session.active && soundEnabled && !isBreak) {
       playNoise(soundType);

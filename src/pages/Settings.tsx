@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useTheme } from 'next-themes';
-import { Moon, Sun, Monitor, Download, Upload, AlertCircle, CheckCircle2, RotateCcw } from 'lucide-react';
+import { Moon, Sun, Monitor, Download, Upload, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Switch } from '@/components/ui/switch';
 import { exportData, importData } from '@/lib/data';
 import { toast } from 'sonner';
@@ -20,7 +19,7 @@ const ACCENT_COLORS = [
 ];
 
 const Settings = () => {
-  const { theme, setTheme } = useTheme();
+  const { setTheme } = useTheme();
   const [accentColor, setAccentColor] = useState('262 80% 50%');
   const [notificationsEnabled, setNotificationsEnabled] = useState(false);
 
@@ -51,7 +50,8 @@ const Settings = () => {
     }
   };
 
-  const handleImport = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleImport = async (e: any) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -104,21 +104,21 @@ const Settings = () => {
             <Label>Design-Modus</Label>
             <div className="flex flex-wrap gap-4">
               <Button
-                variant={theme === 'light' ? 'default' : 'outline'}
+                variant="outline"
                 onClick={() => setTheme('light')}
                 className="flex items-center gap-2"
               >
                 <Sun className="h-4 w-4" /> Hell
               </Button>
               <Button
-                variant={theme === 'dark' ? 'default' : 'outline'}
+                variant="outline"
                 onClick={() => setTheme('dark')}
                 className="flex items-center gap-2"
               >
                 <Moon className="h-4 w-4" /> Dunkel
               </Button>
               <Button
-                variant={theme === 'system' ? 'default' : 'outline'}
+                variant="outline"
                 onClick={() => setTheme('system')}
                 className="flex items-center gap-2"
               >

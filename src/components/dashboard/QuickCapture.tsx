@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createTask, saveTask, TaskCategory } from '@/lib/tasks';
-import { createWissenEntry, saveWissenEntry, WissenCategory } from '@/lib/wissen';
+import { createWissenEntry, saveWissenEntry } from '@/lib/wissen';
 import { toast } from 'sonner';
 
 export function QuickCapture({ onCreated }: { onCreated: () => void }) {
@@ -19,13 +19,14 @@ export function QuickCapture({ onCreated }: { onCreated: () => void }) {
   const recognitionRef = useRef<any>(null);
 
   const startListening = () => {
-    if (!('webkitSpeechRecognition' in window)) {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
       toast.error('Spracherkennung nicht unterstützt');
       return;
     }
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition = (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
     const recognition = new SpeechRecognition();
     recognitionRef.current = recognition;
 
