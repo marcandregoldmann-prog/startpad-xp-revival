@@ -31,11 +31,11 @@ export function SortableWidget({ id, children, enabled = true }: SortableWidgetP
   }
 
   return (
-    <div ref={setNodeRef} style={style} className={`relative group touch-none ${isDragging ? 'opacity-50' : ''}`}>
+    <div ref={setNodeRef} style={style} className={`relative group ${isDragging ? 'opacity-50' : ''}`}>
       <div
         {...attributes}
         {...listeners}
-        className="absolute top-3 right-3 p-1.5 rounded-md cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/30 text-white z-20 backdrop-blur-sm"
+        className="touch-none absolute top-3 right-3 p-1.5 rounded-md cursor-grab active:cursor-grabbing opacity-0 group-hover:opacity-100 transition-opacity bg-black/20 hover:bg-black/30 text-white z-20 backdrop-blur-sm"
       >
         <GripVertical className="h-4 w-4" />
       </div>
