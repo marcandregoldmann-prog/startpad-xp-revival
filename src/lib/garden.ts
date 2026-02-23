@@ -34,9 +34,8 @@ function saveGarden(garden: Plant[]): void {
   localStorage.setItem(GARDEN_KEY, JSON.stringify(garden));
 }
 
-export function plantSeed(type: string = 'sunflower'): Plant {
-  const garden = loadGarden();
-  const newPlant: Plant = {
+function createNewPlant(type: string): Plant {
+  return {
     id: generateId(),
     type,
     stage: 'seed',
@@ -44,9 +43,6 @@ export function plantSeed(type: string = 'sunflower'): Plant {
     lastWatered: new Date().toISOString(),
     growthProgress: 0,
   };
-  garden.push(newPlant);
-  saveGarden(garden);
-  return newPlant;
 }
 
 export function waterGarden(minutes: number): { watered: number, evolved: number } {
@@ -63,14 +59,7 @@ export function waterGarden(minutes: number): { watered: number, evolved: number
       const types = Object.keys(PLANT_TYPES);
       const randomType = types[Math.floor(Math.random() * types.length)];
 
-      const newPlant: Plant = {
-        id: generateId(),
-        type: randomType,
-        stage: 'seed',
-        plantedAt: new Date().toISOString(),
-        lastWatered: new Date().toISOString(),
-        growthProgress: 0,
-      };
+      const newPlant = createNewPlant(randomType);
 
       garden.push(newPlant);
       activePlants = [newPlant]; // Update active reference
