@@ -11,7 +11,7 @@ const XPBar = ({ totalXP, level }: XPBarProps) => {
   const percent = Math.round((currentLevelXP / needed) * 100);
 
   return (
-    <div className="rounded-xl border border-border bg-card p-4 space-y-3">
+    <div className="rounded-2xl border border-white/5 bg-card p-5 space-y-4 shadow-sm">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <span className="text-level font-mono text-sm font-semibold">LVL {level}</span>
