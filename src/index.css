@@ -6,72 +6,76 @@
 
 @layer base {
   :root {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 95%;
+    /* New Dark Palette based on "ClearMind OS" Design */
+    --background: 222 7% 11%;     /* #1a1c1e */
+    --foreground: 210 20% 98%;    /* #f8fafc */
 
-    --card: 0 0% 11%;
-    --card-foreground: 0 0% 95%;
+    --card: 225 10% 15%;          /* #22252a */
+    --card-foreground: 210 20% 98%;
 
-    --popover: 0 0% 11%;
-    --popover-foreground: 0 0% 95%;
+    --popover: 225 10% 15%;
+    --popover-foreground: 210 20% 98%;
 
-    --primary: 0 0% 95%;
-    --primary-foreground: 0 0% 7%;
+    --primary: 210 20% 98%;
+    --primary-foreground: 222 47% 11%;
 
-    --secondary: 0 0% 16%;
-    --secondary-foreground: 0 0% 80%;
+    --secondary: 217 19% 27%;
+    --secondary-foreground: 210 20% 98%;
 
-    --muted: 0 0% 14%;
-    --muted-foreground: 0 0% 55%;
+    --muted: 217 19% 20%;
+    --muted-foreground: 215 16% 65%;
 
-    --accent: 0 0% 18%;
-    --accent-foreground: 0 0% 95%;
+    --accent: 262 80% 50%; /* Purple accent */
+    --accent-foreground: 210 20% 98%;
 
-    --destructive: 0 72% 51%;
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 210 20% 98%;
 
-    --border: 0 0% 18%;
-    --input: 0 0% 18%;
-    --ring: 0 0% 40%;
+    --border: 217 19% 20%;
+    --input: 217 19% 20%;
+    --ring: 262 80% 50%;
 
     --radius: 0.75rem;
 
-    --pro: 152 60% 45%;
-    --pro-foreground: 152 60% 90%;
-    --pro-muted: 152 40% 15%;
+    /* Legacy variables mapping to new palette or kept for compatibility */
+    --pro: 142 70% 50%;
+    --pro-foreground: 142 70% 10%;
+    --pro-muted: 142 30% 20%;
 
-    --contra: 0 65% 50%;
-    --contra-foreground: 0 65% 90%;
-    --contra-muted: 0 40% 15%;
+    --contra: 0 84% 60%;
+    --contra-foreground: 210 20% 98%;
+    --contra-muted: 0 30% 20%;
 
-    --neutral: 45 70% 50%;
-    --neutral-foreground: 45 70% 90%;
+    --neutral: 38 92% 50%;
+    --neutral-foreground: 38 92% 10%;
 
-    --xp: 200 70% 50%;
-    --xp-foreground: 200 70% 90%;
-    --xp-muted: 200 40% 12%;
+    /* Gamification Colors (Brighter/Softer) */
+    --xp: 199 89% 48%; /* Blue */
+    --xp-foreground: 210 20% 98%;
+    --xp-muted: 199 30% 20%;
 
-    --streak: 35 90% 55%;
-    --streak-foreground: 35 90% 90%;
+    --streak: 32 95% 44%; /* Orange/Fire */
+    --streak-foreground: 210 20% 98%;
 
-    --level: 270 50% 55%;
-    --level-foreground: 270 50% 90%;
+    --level: 262 80% 50%; /* Purple */
+    --level-foreground: 210 20% 98%;
 
-    --wissen: 180 55% 45%;
-    --wissen-foreground: 180 55% 90%;
-    --wissen-muted: 180 35% 12%;
+    --wissen: 190 90% 35%; /* Teal/Cyan */
+    --wissen-foreground: 210 20% 98%;
+    --wissen-muted: 190 30% 20%;
 
-    --focus: 40 85% 55%;
-    --focus-foreground: 40 85% 15%;
+    --focus: 48 96% 53%; /* Yellow */
+    --focus-foreground: 48 96% 10%;
 
-    --sidebar-background: 0 0% 7%;
-    --sidebar-foreground: 0 0% 55%;
-    --sidebar-primary: 0 0% 95%;
-    --sidebar-primary-foreground: 0 0% 7%;
-    --sidebar-accent: 0 0% 18%;
-    --sidebar-accent-foreground: 0 0% 95%;
-    --sidebar-border: 0 0% 18%;
-    --sidebar-ring: 0 0% 40%;
+    /* Sidebar/Nav specific */
+    --sidebar-background: 222 7% 11%;
+    --sidebar-foreground: 215 16% 65%;
+    --sidebar-primary: 262 80% 50%;
+    --sidebar-primary-foreground: 210 20% 98%;
+    --sidebar-accent: 217 19% 27%;
+    --sidebar-accent-foreground: 210 20% 98%;
+    --sidebar-border: 217 19% 20%;
+    --sidebar-ring: 262 80% 50%;
   }
 }
 
@@ -80,9 +84,16 @@
     @apply border-border;
   }
 
+  html {
+    overflow-y: scroll; /* Ensure scrollbar is always handled correctly */
+  }
+
   body {
     @apply bg-background text-foreground font-sans antialiased;
     font-family: 'Inter', system-ui, sans-serif;
+    /* Ensure body can grow and scroll */
+    min-height: 100vh;
+    overflow-x: hidden;
   }
 
   h1, h2, h3 {
@@ -107,6 +118,20 @@
   .border-wissen { border-color: hsl(var(--wissen) / 0.3); }
   .text-focus { color: hsl(var(--focus)); }
   .bg-focus { background-color: hsl(var(--focus)); }
+
+  /* Gradient for Tageskompass */
+  .bg-gradient-tageskompass {
+    background: linear-gradient(135deg, #E0B3FF 0%, #AEEEEE 50%, #FFB380 100%);
+  }
+
+  /* Utility for hiding scrollbar but keeping functionality */
+  .scrollbar-hide {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+      display: none;
+  }
 }
 
 @layer components {

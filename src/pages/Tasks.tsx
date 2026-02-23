@@ -8,58 +8,116 @@ import {
   isTaskCompletedToday, completeTask, checkStreakReset, deleteTask,
   type Task, type TaskCompletion, type TaskStats,
 } from '@/lib/tasks';
+import { BarChart3 } from 'lucide-react';
+
+// Error Boundary Component (Simple inline version)
+const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => {
+  return (
+    <div className="rounded-2xl border border-red-500/20 bg-red-500/10 p-6 text-center">
+      <h3 className="text-lg font-bold text-red-500 mb-2">Da ist etwas schief gelaufen</h3>
+      <p className="text-sm text-red-400 mb-4">{error.message}</p>
+      <button onClick={resetErrorBoundary} className="rounded-lg bg-red-500 px-4 py-2 text-sm font-semibold text-white">
+        Erneut versuchen
+      </button>
+    </div>
+  );
+};
 
 const Tasks = () => {
   const [allTasks, setAllTasks] = useState<Task[]>([]);
   const [completions, setCompletions] = useState<TaskCompletion[]>([]);
-  const [stats, setStats] = useState<TaskStats>(loadStats());
+  const [stats, setStats] = useState<TaskStats>({
+    totalXP: 0, level: 1, currentStreak: 0, longestStreak: 0, totalCompletedTasks: 0, lastCompletionDate: null
+  });
   const [showStats, setShowStats] = useState(false);
+  const [error, setError] = useState<Error | null>(null);
 
   const refresh = useCallback(() => {
-    setAllTasks(loadTasks());
-    setCompletions(loadCompletions());
-    setStats(checkStreakReset());
+    try {
+      const loadedTasks = loadTasks() || [];
+      const loadedCompletions = loadCompletions() || [];
+      const loadedStats = checkStreakReset(); // checkStreakReset calls loadStats internally
+
+      setAllTasks(loadedTasks);
+      setCompletions(loadedCompletions);
+      setStats(loadedStats);
+      setError(null);
+    } catch (err) {
+      console.error("Failed to load tasks data:", err);
+      setError(err instanceof Error ? err : new Error('Unknown error loading tasks'));
+    }
   }, []);
 
   useEffect(() => { refresh(); }, [refresh]);
 
-  const todaysTasks = getTodaysTasks(allTasks);
+  if (error) {
+    return <ErrorFallback error={error} resetErrorBoundary={refresh} />;
+  }
+
+  // Safe derivation of today's tasks
+  const todaysTasks = Array.isArray(allTasks) ? getTodaysTasks(allTasks) : [];
   const completedCount = todaysTasks.filter(t => isTaskCompletedToday(t.id, completions)).length;
 
   const handleComplete = (task: Task) => {
-    const updatedStats = completeTask(task.id, task.xp);
-    setStats(updatedStats);
-    setCompletions(loadCompletions());
+    try {
+      const updatedStats = completeTask(task.id, task.xp);
+      setStats(updatedStats);
+      setCompletions(loadCompletions());
+    } catch (err) {
+      console.error("Failed to complete task:", err);
+    }
   };
 
-  const handleDelete = (id: string) => { deleteTask(id); refresh(); };
+  const handleDelete = (id: string) => {
+    try {
+      deleteTask(id);
+      refresh();
+    } catch (err) {
+      console.error("Failed to delete task:", err);
+    }
+  };
+
   const handleTaskCreated = () => { refresh(); };
 
   return (
-    <div className="space-y-5">
-      <XPBar totalXP={stats.totalXP} level={stats.level} />
-      <div className="flex items-center justify-between">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      <XPBar totalXP={stats?.totalXP || 0} level={stats?.level || 1} />
+
+      <div className="flex items-center justify-between px-1">
         <div>
-          <h2 className="text-xs font-medium uppercase tracking-wider text-muted-foreground">Heute</h2>
-          <p className="text-xs text-muted-foreground mt-0.5 font-mono">{completedCount} / {todaysTasks.length} erledigt</p>
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Heute</h2>
+          <p className="text-xs text-muted-foreground mt-0.5 font-medium">{completedCount} / {todaysTasks.length} erledigt</p>
         </div>
         <button onClick={() => setShowStats(!showStats)}
-          className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${showStats ? 'bg-accent text-foreground' : 'text-muted-foreground hover:text-foreground'}`}>
+          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${showStats ? 'bg-accent text-white shadow-lg shadow-accent/25' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}>
+          <BarChart3 className="h-3.5 w-3.5" />
           Statistik
         </button>
       </div>
-      {showStats && <StatsCard stats={stats} />}
-      <div className="space-y-2">
+
+      {showStats && (
+        <div className="animate-in slide-in-from-top-2 duration-300">
+          <StatsCard stats={stats} />
+        </div>
+      )}
+
+      <div className="space-y-3 pb-20">
         {todaysTasks.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-8">Noch keine Aufgaben erstellt.</p>
+          <div className="rounded-2xl border border-dashed border-white/10 bg-card/30 p-8 text-center">
+            <p className="text-sm text-muted-foreground">Noch keine Aufgaben für heute.</p>
+          </div>
         ) : (
           todaysTasks.map(task => (
             <TaskItem key={task.id} task={task} completed={isTaskCompletedToday(task.id, completions)}
               onComplete={handleComplete} onDelete={handleDelete} />
           ))
         )}
+
+        {/* Task Creator at the bottom of the list */}
+        <div className="pt-2">
+          <TaskCreator onTaskCreated={handleTaskCreated} />
+        </div>
       </div>
-      <TaskCreator onTaskCreated={handleTaskCreated} />
     </div>
   );
 };
