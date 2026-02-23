@@ -156,7 +156,7 @@
   }
 
   html {
-    overflow-y: scroll; /* Ensure scrollbar is always handled correctly */
+    /* overflow-y: scroll; Removed to fix mobile scrolling issues */
   }
 
   body {
