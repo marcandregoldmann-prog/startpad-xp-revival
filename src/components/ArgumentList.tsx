@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import { Plus, X } from 'lucide-react';
-import { Argument, generateId } from '@/lib/decisions';
+import { Argument } from '@/lib/decisions';
 
 interface ArgumentListProps {
   type: 'pro' | 'contra';
@@ -9,59 +8,66 @@ interface ArgumentListProps {
 }
 
 const ArgumentList = ({ type, arguments: args, onChange }: ArgumentListProps) => {
-  const [text, setText] = useState('');
-  const [weight, setWeight] = useState(3);
-
   const isPro = type === 'pro';
-  const label = isPro ? 'Pro' : 'Contra';
+  const color = isPro ? 'emerald' : 'rose';
 
-  const addArgument = () => {
-    if (!text.trim()) return;
-    onChange([...args, { id: generateId(), text: text.trim(), weight }]);
-    setText('');
-    setWeight(3);
+  const handleAdd = () => {
+    onChange([...args, { id: crypto.randomUUID(), text: '', weight: 3 }]);
   };
 
-  const removeArgument = (id: string) => {
+  const handleUpdate = (id: string, text: string, weight: number) => {
+    onChange(args.map(a => a.id === id ? { ...a, text, weight } : a));
+  };
+
+  const handleRemove = (id: string) => {
     onChange(args.filter(a => a.id !== id));
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') { e.preventDefault(); addArgument(); }
-  };
-
-  const totalWeight = args.reduce((sum, a) => sum + a.weight, 0);
-
   return (
-    <div className={`rounded-xl border p-4 ${isPro ? 'border-pro bg-pro-muted' : 'border-contra bg-contra-muted'}`}>
-      <div className="flex items-center justify-between mb-3">
-        <h3 className={`text-sm font-semibold uppercase tracking-wider ${isPro ? 'text-pro' : 'text-contra'}`}>{label}</h3>
-        <span className={`text-xs font-mono ${isPro ? 'text-pro' : 'text-contra'}`}>Σ {totalWeight}</span>
+    <div className={`space-y-3 rounded-3xl border border-white/5 bg-gradient-to-br from-${color}-500/5 to-transparent p-5 backdrop-blur-sm shadow-sm`}>
+      <div className="flex items-center justify-between mb-1">
+        <h3 className={`text-xs font-bold uppercase tracking-wider text-${color}-500 flex items-center gap-2`}>
+          <div className={`h-2 w-2 rounded-full bg-${color}-500 shadow-[0_0_10px_currentColor]`} />
+          {isPro ? 'Pro Argumente' : 'Contra Argumente'}
+        </h3>
+        <span className="text-[10px] font-mono text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">{args.length}</span>
       </div>
-      <div className="space-y-2 mb-3">
+
+      <div className="space-y-3">
         {args.map((arg) => (
-          <div key={arg.id} className="flex items-center gap-2 rounded-lg bg-background/50 px-3 py-2 text-sm">
-            <span className="flex-1 text-foreground">{arg.text}</span>
-            <span className={`font-mono text-xs font-medium ${isPro ? 'text-pro' : 'text-contra'}`}>{arg.weight}</span>
-            <button onClick={() => removeArgument(arg.id)} className="text-muted-foreground hover:text-foreground transition-colors">
-              <X className="h-3.5 w-3.5" />
+          <div key={arg.id} className="flex items-center gap-3 animate-in fade-in slide-in-from-left-2 duration-200">
+            <div className="flex-1 space-y-2 rounded-2xl border border-white/5 bg-black/20 p-3 hover:border-white/10 transition-colors">
+              <input
+                type="text"
+                value={arg.text}
+                onChange={(e) => handleUpdate(arg.id, e.target.value, arg.weight)}
+                placeholder="Argument..."
+                className="w-full bg-transparent text-sm text-foreground placeholder:text-muted-foreground/40 focus:outline-none"
+              />
+              <div className="flex items-center gap-2 pt-1">
+                <span className="text-[10px] uppercase font-bold text-muted-foreground/60">Gewichtung</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="5"
+                  value={arg.weight}
+                  onChange={(e) => handleUpdate(arg.id, arg.text, Number(e.target.value))}
+                  className={`h-1 flex-1 rounded-full appearance-none bg-white/10 cursor-pointer accent-${color}-500 hover:accent-${color}-400 transition-all`}
+                />
+                <span className={`text-xs font-mono font-bold text-${color}-500 w-3 text-center`}>{arg.weight}</span>
+              </div>
+            </div>
+            <button onClick={() => handleRemove(arg.id)} className="text-muted-foreground/30 hover:text-red-400 p-2 rounded-xl hover:bg-red-400/10 transition-colors">
+              <X className="h-4 w-4" />
             </button>
           </div>
         ))}
       </div>
-      <div className="flex gap-2">
-        <input type="text" value={text} onChange={(e) => setText(e.target.value)} onKeyDown={handleKeyDown}
-          placeholder={`${label}-Argument...`}
-          className="flex-1 rounded-lg border border-border bg-background/50 px-3 py-2 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-1 focus:ring-ring" />
-        <select value={weight} onChange={(e) => setWeight(Number(e.target.value))}
-          className="w-14 rounded-lg border border-border bg-background/50 px-2 py-2 text-sm text-foreground focus:outline-none focus:ring-1 focus:ring-ring">
-          {[1, 2, 3, 4, 5].map(w => <option key={w} value={w}>{w}</option>)}
-        </select>
-        <button onClick={addArgument} disabled={!text.trim()}
-          className={`rounded-lg p-2 transition-colors disabled:opacity-30 ${isPro ? 'bg-pro/20 text-pro hover:bg-pro/30' : 'bg-contra/20 text-contra hover:bg-contra/30'}`}>
-          <Plus className="h-4 w-4" />
-        </button>
-      </div>
+
+      <button onClick={handleAdd}
+        className={`w-full flex items-center justify-center gap-2 rounded-xl border border-dashed border-${color}-500/20 py-3 text-xs font-medium text-${color}-500/70 hover:bg-${color}-500/10 hover:text-${color}-500 hover:border-${color}-500/40 transition-all duration-300`}>
+        <Plus className="h-3.5 w-3.5" /> Argument hinzufügen
+      </button>
     </div>
   );
 };
