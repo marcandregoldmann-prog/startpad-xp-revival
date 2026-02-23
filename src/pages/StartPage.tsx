@@ -15,16 +15,14 @@ import { ReflectionWidget } from '@/components/dashboard/ReflectionWidget';
 import { ChallengeWidget } from '@/components/dashboard/ChallengeWidget';
 import FocusWidget from '@/components/FocusWidget';
 import { QuickCapture } from '@/components/dashboard/QuickCapture';
-import { Pencil, LayoutDashboard } from 'lucide-react';
-import { GardenWidget } from '@/components/dashboard/GardenWidget';
+import { Pencil } from 'lucide-react';
 
 export default function StartPage() {
   const [updateKey, setUpdateKey] = useState(0);
   const [items, setItems] = useState([
-    'header', 'links', 'challenge', 'garden', 'media', 'progress', 'focus_goal', 'hints', 'timer', 'reflection'
+    'header', 'links', 'challenge', 'media', 'progress', 'focus_goal', 'hints', 'timer', 'reflection'
   ]);
   const [editLinks, setEditLinks] = useState(false);
-  const [editDashboard, setEditDashboard] = useState(false);
   const [wochenfokus, setWochenfokus] = useState(loadWochenfokus());
 
   // Load order
@@ -86,7 +84,6 @@ export default function StartPage() {
           </section>
         );
       case 'challenge': return <ChallengeWidget />;
-      case 'garden': return <GardenWidget />;
       case 'media': return <MediaWidget runningMedia={runningMedia} />;
       case 'progress': return <ProgressWidget completed={completedCount} total={todaysTasks.length} />;
       case 'focus_goal': return <FocusGoalWidget wochenfokus={wochenfokus} setWochenfokus={setWochenfokus} />;
@@ -99,36 +96,17 @@ export default function StartPage() {
 
   return (
     <div key={updateKey} className="space-y-6 pb-8 animate-in fade-in duration-500">
-       <div className="flex justify-end px-1">
-          <button onClick={() => setEditDashboard(!editDashboard)}
-            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${editDashboard ? 'bg-accent text-accent-foreground shadow-lg shadow-accent/25' : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'}`}>
-            <LayoutDashboard className="h-3.5 w-3.5" />
-            {editDashboard ? 'Layout fertig' : 'Layout anpassen'}
-          </button>
-       </div>
-
-       {editDashboard ? (
-         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-           <SortableContext items={items} strategy={verticalListSortingStrategy}>
-             <div className="space-y-8">
-               {items.map(id => (
-                 <SortableWidget key={id} id={id} enabled={editDashboard}>
-                   {renderWidget(id)}
-                 </SortableWidget>
-               ))}
-             </div>
-           </SortableContext>
-         </DndContext>
-       ) : (
-         <div className="space-y-8">
-           {items.map(id => (
-             <SortableWidget key={id} id={id} enabled={false}>
-               {renderWidget(id)}
-             </SortableWidget>
-           ))}
-         </div>
-       )}
-
+       <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+         <SortableContext items={items} strategy={verticalListSortingStrategy}>
+           <div className="space-y-8">
+             {items.map(id => (
+               <SortableWidget key={id} id={id} enabled={!editLinks}>
+                 {renderWidget(id)}
+               </SortableWidget>
+             ))}
+           </div>
+         </SortableContext>
+       </DndContext>
        <QuickCapture onCreated={() => setUpdateKey(k => k + 1)} />
     </div>
   );

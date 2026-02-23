@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { saveTask, createTask, type TaskCategory, type TaskRepeat, type TaskPriority } from '@/lib/tasks';
-import { loadWissen } from '@/lib/wissen';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
@@ -16,7 +15,6 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
   const [repeat, setRepeat] = useState<TaskRepeat>('täglich');
   const [priority, setPriority] = useState<TaskPriority>('mittel');
   const [dueDate, setDueDate] = useState('');
-  const [knowledgeId, setKnowledgeId] = useState<string>('none');
   const [isAdding, setIsAdding] = useState(false);
 
   const wissenEntries = loadWissen();
@@ -25,15 +23,7 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    const newTask = createTask(
-      title.trim(),
-      category,
-      xp,
-      repeat,
-      priority,
-      dueDate || undefined,
-      knowledgeId === 'none' ? undefined : knowledgeId
-    );
+    const newTask = createTask(title.trim(), category, xp, repeat, priority, dueDate || undefined);
     saveTask(newTask);
 
     setTitle('');
@@ -42,7 +32,6 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
     setRepeat('täglich');
     setPriority('mittel');
     setDueDate('');
-    setKnowledgeId('none');
     setIsAdding(false);
     onTaskCreated();
   };

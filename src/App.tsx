@@ -10,7 +10,6 @@ import Decisions from "./pages/Decisions";
 import Wissen from "./pages/Wissen";
 import Habits from "./pages/Habits";
 import Settings from "./pages/Settings";
-import FocusPage from "./pages/FocusPage";
 import NotFound from "./pages/NotFound";
 import { CommandPalette } from "./components/CommandPalette";
 import { useEffect } from "react";
@@ -45,6 +44,13 @@ const AppLayout = () => {
     );
   }
 
+  useEffect(() => {
+    const savedAccent = localStorage.getItem('clearmind-accent');
+    if (savedAccent) {
+      document.documentElement.style.setProperty('--accent', savedAccent);
+    }
+  }, []);
+
   return (
     <div className="min-h-screen bg-background font-sans transition-colors duration-300">
       <CommandPalette />
@@ -73,14 +79,14 @@ const AppLayout = () => {
       </main>
 
       <nav className="fixed bottom-0 left-0 right-0 z-10 bg-background/90 backdrop-blur-md pt-2 pb-6 border-t border-border/40 transition-colors duration-300">
-        <div className="mx-auto max-w-lg grid grid-cols-5 px-4 gap-1">
+        <div className="mx-auto max-w-lg flex items-center justify-around px-6">
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
             return (
               <button key={item.path} onClick={() => navigate(item.path)}
                 className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all duration-300 ${
                   isActive
-                    ? 'text-accent font-medium bg-accent/10'
+                    ? 'bg-accent text-accent-foreground font-medium shadow-lg shadow-accent/25'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}>
                 <item.icon className={`h-5 w-5 ${isActive ? 'fill-current' : ''}`} strokeWidth={isActive ? 2.5 : 2} />

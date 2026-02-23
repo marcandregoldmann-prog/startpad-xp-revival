@@ -1,12 +1,12 @@
-import { useState, useRef } from 'react';
-import { Plus, Mic, MicOff } from 'lucide-react';
+import { useState } from 'react';
+import { Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { createTask, saveTask, TaskCategory } from '@/lib/tasks';
-import { createWissenEntry, saveWissenEntry } from '@/lib/wissen';
+import { createWissenEntry, saveWissenEntry, WissenCategory } from '@/lib/wissen';
 import { toast } from 'sonner';
 
 export function QuickCapture({ onCreated }: { onCreated: () => void }) {
@@ -14,50 +14,6 @@ export function QuickCapture({ onCreated }: { onCreated: () => void }) {
   const [type, setType] = useState<'task' | 'wissen'>('task');
   const [title, setTitle] = useState('');
   const [category, setCategory] = useState<string>('Sonstiges');
-  const [isListening, setIsListening] = useState(false);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = useRef<any>(null);
-
-  const startListening = () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
-      toast.error('Spracherkennung nicht unterstützt');
-      return;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-    const recognition = new SpeechRecognition();
-    recognitionRef.current = recognition;
-
-    recognition.lang = 'de-DE';
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-
-    recognition.onstart = () => setIsListening(true);
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (event: any) => {
-      const transcript = event.results[0][0].transcript;
-      setTitle(transcript);
-    };
-
-    recognition.onerror = () => {
-      toast.error('Fehler bei der Spracherkennung');
-      setIsListening(false);
-    };
-
-    recognition.onend = () => setIsListening(false);
-
-    recognition.start();
-  };
-
-  const stopListening = () => {
-    if (recognitionRef.current) {
-      recognitionRef.current.stop();
-      setIsListening(false);
-    }
-  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -110,12 +66,7 @@ export function QuickCapture({ onCreated }: { onCreated: () => void }) {
           </div>
           <div className="space-y-2">
             <Label>Titel</Label>
-            <div className="flex gap-2">
-              <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Was möchtest du erfassen?" autoFocus />
-              <Button type="button" variant={isListening ? "destructive" : "outline"} size="icon" onClick={isListening ? stopListening : startListening}>
-                {isListening ? <MicOff className="h-4 w-4 animate-pulse" /> : <Mic className="h-4 w-4" />}
-              </Button>
-            </div>
+            <Input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Was möchtest du erfassen?" autoFocus />
           </div>
           {type === 'task' && (
              <div className="space-y-2">

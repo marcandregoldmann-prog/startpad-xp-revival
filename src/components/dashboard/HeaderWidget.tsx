@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
-import { Calendar, Award, Flame, Zap, BarChart2 } from 'lucide-react';
+import { Calendar, Award, Flame, Zap } from 'lucide-react';
 import { TaskStats, Task } from '@/lib/tasks';
-import { WeeklyReview } from './WeeklyReview';
 
 interface HeaderWidgetProps {
   stats: TaskStats;
@@ -12,7 +11,6 @@ interface HeaderWidgetProps {
 export function HeaderWidget({ stats, todaysXP, openTasksCount }: HeaderWidgetProps) {
   const [now, setNow] = useState(new Date());
   const [name, setName] = useState('User');
-  const [showReview, setShowReview] = useState(false);
 
   useEffect(() => {
     const savedName = localStorage.getItem('clearmind-username');
@@ -53,23 +51,16 @@ export function HeaderWidget({ stats, todaysXP, openTasksCount }: HeaderWidgetPr
            <div className="font-mono text-2xl font-bold tracking-tight text-zinc-900/80 mb-1">
             {timeStr}
           </div>
-          <div className="flex gap-1.5">
-            <button onClick={() => setShowReview(true)} className="flex items-center gap-1.5 rounded-full bg-white/30 hover:bg-white/40 backdrop-blur-md px-2.5 py-1 shadow-sm border border-white/20 transition-colors" title="Wochenrückblick">
-              <BarChart2 className="h-3.5 w-3.5 text-zinc-900" />
-            </button>
-            <div className="flex items-center gap-1.5 rounded-full bg-white/30 backdrop-blur-md px-2.5 py-1 shadow-sm border border-white/20">
-              <Flame className="h-3.5 w-3.5 text-orange-600" />
-              <span className="text-[10px] font-bold text-zinc-900">{stats.currentStreak}d Streak</span>
-            </div>
-            <div className="flex items-center gap-1.5 rounded-full bg-white/30 backdrop-blur-md px-2.5 py-1 shadow-sm border border-white/20">
-              <Zap className="h-3.5 w-3.5 text-blue-600" />
-              <span className="text-[10px] font-bold text-zinc-900">+{todaysXP} XP</span>
-            </div>
+          <div className="flex items-center gap-1.5 rounded-full bg-white/30 backdrop-blur-md px-2.5 py-1 shadow-sm border border-white/20">
+            <Flame className="h-3.5 w-3.5 text-orange-600" />
+            <span className="text-[10px] font-bold text-zinc-900">{stats.currentStreak}d Streak</span>
+          </div>
+          <div className="flex items-center gap-1.5 rounded-full bg-white/30 backdrop-blur-md px-2.5 py-1 shadow-sm border border-white/20">
+            <Zap className="h-3.5 w-3.5 text-blue-600" />
+            <span className="text-[10px] font-bold text-zinc-900">+{todaysXP} XP</span>
           </div>
         </div>
       </div>
-
-      <WeeklyReview open={showReview} onOpenChange={setShowReview} />
 
       {/* Decorative Circles */}
       <div className="absolute -top-12 -right-12 h-40 w-40 rounded-full bg-white/20 blur-3xl pointer-events-none"></div>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Trash2, Archive, Calendar, Check, MoreVertical, Plus, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
+import { Trash2, Archive, Calendar, Check, MoreVertical, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { type Task, type Subtask, type TaskPriority } from '@/lib/tasks';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
@@ -94,11 +94,6 @@ const TaskItem = ({ task, completed, onComplete, onDelete, onArchive, onUpdate }
               )}>
                 <Calendar className="h-3 w-3" />
                 {new Date(task.dueDate).toLocaleDateString('de-DE', { day: '2-digit', month: '2-digit' })}
-              </span>
-            )}
-            {task.knowledgeId && (
-              <span className="text-[10px] text-blue-400 bg-blue-500/10 border border-blue-500/20 px-1.5 py-0.5 rounded-full flex items-center gap-1 ml-1" title="Verknüpftes Wissen">
-                <BookOpen className="h-3 w-3" />
               </span>
             )}
           </div>
