@@ -5,10 +5,11 @@ import XPBar from '@/components/XPBar';
 import StatsCard from '@/components/StatsCard';
 import {
   loadTasks, loadCompletions, loadStats, getTodaysTasks,
-  isTaskCompletedToday, completeTask, checkStreakReset, deleteTask,
+  isTaskCompletedToday, completeTask, checkStreakReset, deleteTask, updateTask,
   type Task, type TaskCompletion, type TaskStats,
 } from '@/lib/tasks';
-import { BarChart3 } from 'lucide-react';
+import { BarChart3, Archive, CheckCheck, Sparkles } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 // Error Boundary Component (Simple inline version)
 const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => {
@@ -30,7 +31,14 @@ const Tasks = () => {
     totalXP: 0, level: 1, currentStreak: 0, longestStreak: 0, totalCompletedTasks: 0, lastCompletionDate: null
   });
   const [showStats, setShowStats] = useState(false);
+  const [showArchived, setShowArchived] = useState(false);
   const [error, setError] = useState<Error | null>(null);
+
+  // Experimental: Daily Plan state (derived or manual?)
+  // origin/main used 'dailyPlan' but didn't define it in the snippet I saw?
+  // Wait, I saw <Dialog open={!!dailyPlan}... setDailyPlan(null)>
+  // I need to define this state.
+  const [dailyPlan, setDailyPlan] = useState<any[] | null>(null);
 
   const refresh = useCallback(() => {
     try {
@@ -54,8 +62,10 @@ const Tasks = () => {
     return <ErrorFallback error={error} resetErrorBoundary={refresh} />;
   }
 
-  // Safe derivation of today's tasks
-  const todaysTasks = Array.isArray(allTasks) ? getTodaysTasks(allTasks) : [];
+  // Safe derivation
+  const safeAllTasks = Array.isArray(allTasks) ? allTasks : [];
+  const todaysTasks = getTodaysTasks(safeAllTasks);
+  const archivedTasks = safeAllTasks.filter(t => t.isArchived);
   const completedCount = todaysTasks.filter(t => isTaskCompletedToday(t.id, completions)).length;
 
   const handleComplete = (task: Task) => {
@@ -68,6 +78,21 @@ const Tasks = () => {
     }
   };
 
+  const handleCompleteAll = () => {
+    if (confirm('Alle offenen Aufgaben von heute als erledigt markieren?')) {
+      try {
+        todaysTasks.forEach(t => {
+          if (!isTaskCompletedToday(t.id, completions)) {
+            completeTask(t.id, t.xp);
+          }
+        });
+        refresh();
+      } catch (err) {
+        console.error("Failed to complete all:", err);
+      }
+    }
+  };
+
   const handleDelete = (id: string) => {
     try {
       deleteTask(id);
@@ -77,22 +102,80 @@ const Tasks = () => {
     }
   };
 
+  const handleArchive = (id: string) => {
+    try {
+      updateTask(id, { isArchived: true });
+      refresh();
+    } catch (err) { console.error(err); }
+  };
+
+  const handleRestore = (id: string) => {
+    try {
+      updateTask(id, { isArchived: false });
+      refresh();
+    } catch (err) { console.error(err); }
+  };
+
+  const handleUpdate = (id: string, updates: Partial<Task>) => {
+    try {
+      updateTask(id, updates);
+      refresh();
+    } catch (err) { console.error(err); }
+  };
+
   const handleTaskCreated = () => { refresh(); };
+
+  if (showArchived) {
+    return (
+      <div className="space-y-6 animate-in fade-in duration-500 pb-20">
+        <div className="flex items-center justify-between px-1">
+          <h2 className="text-lg font-bold">Archiv</h2>
+          <button onClick={() => setShowArchived(false)} className="text-sm text-accent font-medium hover:underline">
+            Zurück
+          </button>
+        </div>
+        <div className="space-y-3">
+          {archivedTasks.length === 0 ? <p className="text-muted-foreground text-center py-8">Leer.</p> :
+            archivedTasks.map(task => (
+              <div key={task.id} className="flex items-center justify-between bg-card p-4 rounded-2xl border border-border">
+                <span className="font-medium">{task.title}</span>
+                <div className="flex gap-2">
+                   <button onClick={() => handleRestore(task.id)} className="text-xs bg-accent/10 text-accent px-2 py-1 rounded-md">Wiederherstellen</button>
+                   <button onClick={() => handleDelete(task.id)} className="text-xs text-red-400 px-2 py-1">Löschen</button>
+                </div>
+              </div>
+            ))
+          }
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <XPBar totalXP={stats?.totalXP || 0} level={stats?.level || 1} />
+      <XPBar totalXP={stats.totalXP} level={stats.level} />
 
       <div className="flex items-center justify-between px-1">
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground">Heute</h2>
           <p className="text-xs text-muted-foreground mt-0.5 font-medium">{completedCount} / {todaysTasks.length} erledigt</p>
         </div>
-        <button onClick={() => setShowStats(!showStats)}
-          className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${showStats ? 'bg-accent text-white shadow-lg shadow-accent/25' : 'text-muted-foreground hover:bg-white/5 hover:text-foreground'}`}>
-          <BarChart3 className="h-3.5 w-3.5" />
-          Statistik
-        </button>
+        <div className="flex gap-2">
+          <button onClick={handleCompleteAll} title="Alle erledigen"
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted/10 hover:text-foreground transition-all">
+            <CheckCheck className="h-3.5 w-3.5" />
+          </button>
+          <button onClick={() => setShowArchived(true)}
+            className="flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium text-muted-foreground hover:bg-muted/10 hover:text-foreground transition-all">
+            <Archive className="h-3.5 w-3.5" />
+            Archiv
+          </button>
+          <button onClick={() => setShowStats(!showStats)}
+            className={`flex items-center gap-1.5 rounded-full px-3 py-1.5 text-xs font-medium transition-all ${showStats ? 'bg-accent text-accent-foreground shadow-lg shadow-accent/25' : 'text-muted-foreground hover:bg-muted/10 hover:text-foreground'}`}>
+            <BarChart3 className="h-3.5 w-3.5" />
+            Statistik
+          </button>
+        </div>
       </div>
 
       {showStats && (
@@ -103,13 +186,13 @@ const Tasks = () => {
 
       <div className="space-y-3 pb-20">
         {todaysTasks.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-white/10 bg-card/30 p-8 text-center">
+          <div className="rounded-2xl border border-dashed border-border bg-card/30 p-8 text-center">
             <p className="text-sm text-muted-foreground">Noch keine Aufgaben für heute.</p>
           </div>
         ) : (
           todaysTasks.map(task => (
             <TaskItem key={task.id} task={task} completed={isTaskCompletedToday(task.id, completions)}
-              onComplete={handleComplete} onDelete={handleDelete} />
+              onComplete={handleComplete} onDelete={handleDelete} onArchive={handleArchive} onUpdate={handleUpdate} />
           ))
         )}
 
@@ -118,6 +201,32 @@ const Tasks = () => {
           <TaskCreator onTaskCreated={handleTaskCreated} />
         </div>
       </div>
+
+      <Dialog open={!!dailyPlan} onOpenChange={(open) => !open && setDailyPlan(null)}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Sparkles className="h-5 w-5 text-indigo-500" />
+              Dein Tagesplan
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-2">
+            {dailyPlan && dailyPlan.length === 0 ? (
+               <p className="text-sm text-muted-foreground">Keine Aufgaben für einen Plan vorhanden.</p>
+            ) : (
+              <div className="relative border-l border-border ml-2 space-y-6 py-2">
+                {dailyPlan?.map((block, i) => (
+                  <div key={i} className="ml-6 relative">
+                    <span className={`absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-background ${block.type === 'focus' ? 'bg-indigo-500' : block.type === 'break' ? 'bg-emerald-500' : 'bg-slate-500'}`} />
+                    <p className="text-xs font-mono text-muted-foreground mb-0.5">{block.time}</p>
+                    <p className="text-sm font-medium">{block.activity}</p>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

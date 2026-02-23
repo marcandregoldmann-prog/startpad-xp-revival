@@ -1,16 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
-
 @layer base {
   :root {
-    /* New Dark Palette based on "ClearMind OS" Design */
-    --background: 222 7% 11%;     /* #1a1c1e */
-    --foreground: 210 20% 98%;    /* #f8fafc */
+    /* Light Mode Palette */
+    --background: 0 0% 100%;
+    --foreground: 222 7% 11%;
 
-    --card: 225 10% 15%;          /* #22252a */
+    --card: 0 0% 100%;
+    --card-foreground: 222 7% 11%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 7% 11%;
+
+    --primary: 222 47% 11%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222 47% 11%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215 16% 47%;
+
+    --accent: 262 80% 50%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 262 80% 50%;
+
+    --radius: 0.75rem;
+
+    /* Legacy/Custom Variables */
+    --pro: 142 70% 45%;
+    --pro-foreground: 142 70% 98%;
+    --pro-muted: 142 30% 96%;
+
+    --contra: 0 84% 60%;
+    --contra-foreground: 0 0% 98%;
+    --contra-muted: 0 30% 96%;
+
+    --neutral: 38 92% 50%;
+    --neutral-foreground: 38 92% 10%;
+
+    /* Gamification Colors */
+    --xp: 199 89% 48%;
+    --xp-foreground: 210 40% 98%;
+    --xp-muted: 199 30% 96%;
+
+    --streak: 32 95% 44%;
+    --streak-foreground: 210 40% 98%;
+
+    --level: 262 80% 50%;
+    --level-foreground: 210 40% 98%;
+
+    --wissen: 190 90% 35%;
+    --wissen-foreground: 210 40% 98%;
+    --wissen-muted: 190 30% 96%;
+
+    --focus: 48 96% 53%;
+    --focus-foreground: 48 96% 10%;
+
+    /* Sidebar/Nav specific - Light Mode overrides */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 215 16% 47%;
+    --sidebar-primary: 262 80% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 210 40% 96.1%;
+    --sidebar-accent-foreground: 222 47% 11%;
+    --sidebar-border: 214.3 31.8% 91.4%;
+    --sidebar-ring: 262 80% 50%;
+  }
+
+  .dark {
+    /* Dark Mode Palette (Original) */
+    --background: 222 7% 11%;
+    --foreground: 210 20% 98%;
+
+    --card: 225 10% 15%;
     --card-foreground: 210 20% 98%;
 
     --popover: 225 10% 15%;
@@ -25,7 +98,7 @@
     --muted: 217 19% 20%;
     --muted-foreground: 215 16% 65%;
 
-    --accent: 262 80% 50%; /* Purple accent */
+    --accent: 262 80% 50%;
     --accent-foreground: 210 20% 98%;
 
     --destructive: 0 62% 30%;
@@ -35,9 +108,7 @@
     --input: 217 19% 20%;
     --ring: 262 80% 50%;
 
-    --radius: 0.75rem;
-
-    /* Legacy variables mapping to new palette or kept for compatibility */
+    /* Legacy/Custom Variables Dark */
     --pro: 142 70% 50%;
     --pro-foreground: 142 70% 10%;
     --pro-muted: 142 30% 20%;
@@ -49,25 +120,25 @@
     --neutral: 38 92% 50%;
     --neutral-foreground: 38 92% 10%;
 
-    /* Gamification Colors (Brighter/Softer) */
-    --xp: 199 89% 48%; /* Blue */
+    /* Gamification Colors Dark */
+    --xp: 199 89% 48%;
     --xp-foreground: 210 20% 98%;
     --xp-muted: 199 30% 20%;
 
-    --streak: 32 95% 44%; /* Orange/Fire */
+    --streak: 32 95% 44%;
     --streak-foreground: 210 20% 98%;
 
-    --level: 262 80% 50%; /* Purple */
+    --level: 262 80% 50%;
     --level-foreground: 210 20% 98%;
 
-    --wissen: 190 90% 35%; /* Teal/Cyan */
+    --wissen: 190 90% 35%;
     --wissen-foreground: 210 20% 98%;
     --wissen-muted: 190 30% 20%;
 
-    --focus: 48 96% 53%; /* Yellow */
+    --focus: 48 96% 53%;
     --focus-foreground: 48 96% 10%;
 
-    /* Sidebar/Nav specific */
+    /* Sidebar/Nav specific Dark */
     --sidebar-background: 222 7% 11%;
     --sidebar-foreground: 215 16% 65%;
     --sidebar-primary: 262 80% 50%;

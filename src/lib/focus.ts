@@ -13,7 +13,7 @@ export function loadFocusSession(): FocusSession {
   try {
     const data = localStorage.getItem(FOCUS_KEY);
     if (data) return JSON.parse(data);
-  } catch {}
+  } catch { /* ignore */ }
   return { active: false, startedAt: null, duration: 25 };
 }
 
