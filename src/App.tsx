@@ -46,7 +46,7 @@ const AppLayout = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background font-sans transition-colors duration-300">
+    <div className="min-h-screen bg-background font-sans transition-colors duration-300 pb-20 md:pb-0 overflow-x-hidden">
       <CommandPalette />
       <header className="sticky top-0 z-10 bg-background/80 backdrop-blur-md border-b border-border/40">
         <div className="mx-auto flex max-w-lg items-center justify-between px-6 py-4">
@@ -60,7 +60,7 @@ const AppLayout = () => {
         </div>
       </header>
 
-      <main className="mx-auto max-w-lg px-6 py-4 pb-28 animate-in fade-in duration-300">
+      <main className="mx-auto max-w-lg px-6 py-4 pb-32 animate-in fade-in duration-300 mb-20">
         <Routes>
           <Route path="/" element={<StartPage />} />
           <Route path="/tasks" element={<Tasks />} />
@@ -72,7 +72,7 @@ const AppLayout = () => {
         </Routes>
       </main>
 
-      <nav className="fixed bottom-0 left-0 right-0 z-10 bg-background/90 backdrop-blur-md pt-2 pb-6 border-t border-white/5">
+      <nav className="fixed bottom-0 left-0 right-0 z-20 bg-background/90 backdrop-blur-md pt-2 pb-6 border-t border-white/5 safe-area-pb">
         <div className="mx-auto max-w-lg flex items-center justify-around px-6">
           {navItems.map(item => {
             const isActive = location.pathname === item.path;
@@ -84,7 +84,7 @@ const AppLayout = () => {
                     : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
                 }`}>
                 <item.icon className={`h-5 w-5 ${isActive ? 'fill-current' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
-                {isActive && <span className="text-xs tracking-wide uppercase">{item.label}</span>}
+                {isActive && <span className="text-xs tracking-wide uppercase hidden sm:inline">{item.label}</span>}
               </button>
             );
           })}

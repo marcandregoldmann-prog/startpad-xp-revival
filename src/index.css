@@ -156,7 +156,8 @@
   }
 
   html {
-    /* overflow-y: scroll; Removed to fix mobile scrolling issues */
+    overflow-y: scroll; /* Restored to ensure consistent scrollbar behavior */
+    height: 100%;
   }
 
   body {
@@ -164,7 +165,11 @@
     font-family: 'Inter', system-ui, sans-serif;
     /* Ensure body can grow and scroll */
     min-height: 100vh;
-    overflow-x: hidden;
+    /* Use dvh for better mobile support if available */
+    min-height: 100dvh;
+    /* Removed overflow-x: hidden to prevent scroll locking issues on some mobile browsers */
+    /* Use clip if strictly necessary, but standard flow is safer */
+    width: 100%;
   }
 
   h1, h2, h3 {
