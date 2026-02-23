@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Plus } from 'lucide-react';
 import { saveTask, createTask, type TaskCategory, type TaskRepeat, type TaskPriority } from '@/lib/tasks';
+import { loadWissen } from '@/lib/wissen';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
 
@@ -15,13 +16,24 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
   const [repeat, setRepeat] = useState<TaskRepeat>('täglich');
   const [priority, setPriority] = useState<TaskPriority>('mittel');
   const [dueDate, setDueDate] = useState('');
+  const [knowledgeId, setKnowledgeId] = useState<string>('none');
   const [isAdding, setIsAdding] = useState(false);
+
+  const wissenEntries = loadWissen();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    const newTask = createTask(title.trim(), category, xp, repeat, priority, dueDate || undefined);
+    const newTask = createTask(
+      title.trim(),
+      category,
+      xp,
+      repeat,
+      priority,
+      dueDate || undefined,
+      knowledgeId === 'none' ? undefined : knowledgeId
+    );
     saveTask(newTask);
 
     setTitle('');
@@ -30,6 +42,7 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
     setRepeat('täglich');
     setPriority('mittel');
     setDueDate('');
+    setKnowledgeId('none');
     setIsAdding(false);
     onTaskCreated();
   };
@@ -103,6 +116,21 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
           <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
             className="w-full rounded-xl border border-input bg-background/50 px-3 py-2 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-accent h-9" />
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Verknüpftes Wissen (Optional)</Label>
+        <Select value={knowledgeId} onValueChange={setKnowledgeId}>
+          <SelectTrigger className="h-9 rounded-xl border-input bg-background/50 text-xs font-medium w-full">
+            <SelectValue placeholder="Kein Wissenseintrag" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Kein Wissenseintrag</SelectItem>
+            {wissenEntries.map(w => (
+              <SelectItem key={w.id} value={w.id}>{w.title}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-1.5">

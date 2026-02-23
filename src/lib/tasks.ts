@@ -22,6 +22,7 @@ export interface Task {
   subtasks?: Subtask[];
   isArchived?: boolean;
   note?: string;
+  knowledgeId?: string; // Link to a specific Wissen entry
 }
 
 export interface TaskCompletion {
@@ -77,7 +78,8 @@ export function createTask(
   xp: number,
   repeat: TaskRepeat,
   priority: TaskPriority = 'mittel',
-  dueDate?: string
+  dueDate?: string,
+  knowledgeId?: string
 ): Task {
   return {
     id: generateId(),
@@ -91,6 +93,7 @@ export function createTask(
     subtasks: [],
     isArchived: false,
     note: '',
+    knowledgeId,
   };
 }
 

@@ -1,0 +1,162 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e2]:
+  - region "Notifications (F8)":
+    - list
+  - region "Notifications alt+T"
+  - generic [ref=e3]:
+    - banner [ref=e4]:
+      - generic [ref=e5]:
+        - heading "ClearMind OS" [level=1] [ref=e6] [cursor=pointer]
+        - button [ref=e7] [cursor=pointer]:
+          - img [ref=e8]
+    - main [ref=e11]:
+      - generic [ref=e12]:
+        - button "Layout anpassen" [ref=e14] [cursor=pointer]:
+          - img [ref=e15]
+          - text: Layout anpassen
+        - generic [ref=e20]:
+          - generic [ref=e23]:
+            - generic [ref=e24]:
+              - generic [ref=e25]:
+                - img [ref=e26]
+                - generic [ref=e28]: Montag, 23. Februar
+              - heading "Guten Tag, User." [level=2] [ref=e29]
+              - paragraph [ref=e30]: Alles erledigt für heute! 🎉
+            - generic [ref=e31]:
+              - generic [ref=e32]: 17:05
+              - generic [ref=e33]:
+                - button "Wochenrückblick" [ref=e34] [cursor=pointer]:
+                  - img [ref=e35]
+                - generic [ref=e36]:
+                  - img [ref=e37]
+                  - generic [ref=e39]: 0d Streak
+                - generic [ref=e40]:
+                  - img [ref=e41]
+                  - generic [ref=e43]: +0 XP
+          - generic [ref=e45]:
+            - generic [ref=e46]:
+              - heading "Links" [level=2] [ref=e47]
+              - button "Bearbeiten" [ref=e48] [cursor=pointer]:
+                - img [ref=e49]
+                - text: Bearbeiten
+            - generic [ref=e52]:
+              - generic [ref=e53]:
+                - button "⚡ Produktivität 2" [ref=e54] [cursor=pointer]:
+                  - generic [ref=e55]: ⚡
+                  - generic [ref=e56]: Produktivität
+                  - generic [ref=e57]: "2"
+                  - img [ref=e58]
+                - generic [ref=e60]:
+                  - generic [ref=e62]:
+                    - generic [ref=e63]: 📅
+                    - link "Kalender" [ref=e64] [cursor=pointer]:
+                      - /url: https://calendar.google.com
+                    - img [ref=e65]
+                  - generic [ref=e69]:
+                    - generic [ref=e70]: 📝
+                    - link "Notizen" [ref=e71] [cursor=pointer]:
+                      - /url: https://notion.so
+                    - img [ref=e72]
+              - generic [ref=e76]:
+                - button "📚 Lernen 1" [ref=e77] [cursor=pointer]:
+                  - generic [ref=e78]: 📚
+                  - generic [ref=e79]: Lernen
+                  - generic [ref=e80]: "1"
+                  - img [ref=e81]
+                - generic [ref=e85]:
+                  - generic [ref=e86]: ▶️
+                  - link "YouTube" [ref=e87] [cursor=pointer]:
+                    - /url: https://youtube.com
+                  - img [ref=e88]
+              - generic [ref=e92]:
+                - button "🛠️ Tools 1" [ref=e93] [cursor=pointer]:
+                  - generic [ref=e94]: 🛠️
+                  - generic [ref=e95]: Tools
+                  - generic [ref=e96]: "1"
+                  - img [ref=e97]
+                - generic [ref=e101]:
+                  - generic [ref=e102]: 🐙
+                  - link "GitHub" [ref=e103] [cursor=pointer]:
+                    - /url: https://github.com
+                  - img [ref=e104]
+          - generic [ref=e109]:
+            - generic [ref=e110]:
+              - img [ref=e112]
+              - generic [ref=e116]:
+                - paragraph [ref=e117]: Tages-Challenge
+                - paragraph [ref=e118]: Ruf jemanden an, den du magst
+            - button "Fertig" [ref=e119] [cursor=pointer]
+          - generic [ref=e121]:
+            - generic [ref=e122]:
+              - heading "Fokus Garten" [level=2] [ref=e123]
+              - button [ref=e124] [cursor=pointer]:
+                - img [ref=e125]
+            - paragraph [ref=e131]: Dein Garten ist leer. Fokussiere dich, um Pflanzen wachsen zu lassen! 🌱
+          - generic [ref=e133]:
+            - heading "Aktuell laufend" [level=2] [ref=e134]
+            - paragraph [ref=e136]: Keine laufenden Inhalte.
+          - generic [ref=e138]:
+            - heading "Tagesfortschritt" [level=2] [ref=e139]
+            - generic [ref=e140]:
+              - generic [ref=e141]:
+                - generic [ref=e142]:
+                  - paragraph [ref=e143]: 0%
+                  - paragraph [ref=e144]: Erledigt
+                - button "Aufgaben öffnen" [ref=e145] [cursor=pointer]
+              - paragraph [ref=e147]: 0 / 0 Aufgaben
+          - generic [ref=e149]:
+            - generic [ref=e150]:
+              - heading "Wochenfokus" [level=2] [ref=e151]
+              - button [ref=e152] [cursor=pointer]:
+                - img [ref=e153]
+            - generic [ref=e156]:
+              - img [ref=e158]
+              - paragraph [ref=e161]: Kein Fokus gesetzt
+          - generic [ref=e163]:
+            - paragraph [ref=e166]: "🌇 Feierabend-Routine: Schließe den Tag ab."
+            - paragraph [ref=e169]: 📖 Guter Zeitpunkt zum Lesen.
+          - generic [ref=e172]:
+            - generic [ref=e173]:
+              - heading "Fokus Timer" [level=2] [ref=e174]:
+                - img [ref=e175]
+                - text: Fokus Timer
+              - generic [ref=e178]: 25:00
+            - generic [ref=e179]:
+              - generic [ref=e180]:
+                - button "15 min" [ref=e181] [cursor=pointer]
+                - button "25 min" [ref=e182] [cursor=pointer]
+                - button "50 min" [ref=e183] [cursor=pointer]
+              - button [ref=e185] [cursor=pointer]:
+                - img [ref=e186]
+            - generic [ref=e190]:
+              - button [ref=e191] [cursor=pointer]:
+                - img [ref=e192]
+              - button "Fokus Modus" [ref=e194] [cursor=pointer]:
+                - img [ref=e195]
+          - generic [ref=e201]:
+            - heading "Reflexion" [level=2] [ref=e202]
+            - button "Tag abschließen" [ref=e203] [cursor=pointer]:
+              - img [ref=e204]
+              - generic [ref=e206]: Tag abschließen
+        - button [ref=e207] [cursor=pointer]:
+          - img
+    - navigation [ref=e208]:
+      - generic [ref=e209]:
+        - button "Start" [ref=e210] [cursor=pointer]:
+          - img [ref=e211]
+          - generic [ref=e214]: Start
+        - button "Aufgaben" [ref=e215] [cursor=pointer]:
+          - img [ref=e216]
+          - generic [ref=e219]: Aufgaben
+        - button "Gewohnheiten" [ref=e220] [cursor=pointer]:
+          - img [ref=e221]
+          - generic [ref=e226]: Gewohnheiten
+        - button "Entscheidungen" [ref=e227] [cursor=pointer]:
+          - img [ref=e228]
+          - generic [ref=e232]: Entscheidungen
+        - button "Wissen" [ref=e233] [cursor=pointer]:
+          - img [ref=e234]
+          - generic [ref=e236]: Wissen
+```

@@ -10,6 +10,7 @@ import Decisions from "./pages/Decisions";
 import Wissen from "./pages/Wissen";
 import Habits from "./pages/Habits";
 import Settings from "./pages/Settings";
+import FocusPage from "./pages/FocusPage";
 import NotFound from "./pages/NotFound";
 import { CommandPalette } from "./components/CommandPalette";
 import { useEffect } from "react";
@@ -27,6 +28,7 @@ const navItems = [
 const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isFocusMode = location.pathname === '/focus';
 
   useEffect(() => {
     const savedAccent = localStorage.getItem('clearmind-accent');
@@ -34,6 +36,14 @@ const AppLayout = () => {
       document.documentElement.style.setProperty('--accent', savedAccent);
     }
   }, []);
+
+  if (isFocusMode) {
+    return (
+      <Routes>
+        <Route path="/focus" element={<FocusPage />} />
+      </Routes>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background font-sans transition-colors duration-300">

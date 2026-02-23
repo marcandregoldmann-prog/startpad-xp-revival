@@ -1,15 +1,21 @@
 import { useState, useEffect, useRef } from 'react';
-import { Play, Pause, Square, Timer, Coffee } from 'lucide-react';
+import { Play, Square, Timer, Coffee, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 import { loadFocusSession, startFocus, stopFocus, type FocusSession } from '@/lib/focus';
 import { addXP } from '@/lib/tasks';
+import { waterGarden } from '@/lib/garden';
+import { playNoise, stopNoise, NoiseType } from '@/lib/audio';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
+import { useNavigate } from 'react-router-dom';
 
 const FocusWidget = () => {
+  const navigate = useNavigate();
   const [session, setSession] = useState<FocusSession>(loadFocusSession());
   const [timeLeft, setTimeLeft] = useState(0);
   const [isBreak, setIsBreak] = useState(false);
   const [targetDuration, setTargetDuration] = useState(25);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundType, setSoundType] = useState<NoiseType>('brown');
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   // Calculate time left based on startedAt
@@ -42,6 +48,7 @@ const FocusWidget = () => {
     return () => {
       if (timerRef.current) clearInterval(timerRef.current);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [session.active, session.startedAt, session.duration]); // Re-run if session changes
 
   // Update timeLeft when targetDuration changes (only if not active)
@@ -49,7 +56,17 @@ const FocusWidget = () => {
     if (!session.active) {
       setTimeLeft(targetDuration * 60);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [targetDuration]);
+
+  useEffect(() => {
+    if (session.active && soundEnabled && !isBreak) {
+      playNoise(soundType);
+    } else {
+      stopNoise();
+    }
+    return () => stopNoise();
+  }, [session.active, soundEnabled, soundType, isBreak]);
 
   const handleStart = () => {
     const newSession = startFocus(targetDuration);
@@ -73,6 +90,12 @@ const FocusWidget = () => {
 
     // XP Reward
     addXP(25); // 25 XP per session
+
+    // Garden Growth
+    const { evolved } = waterGarden(session.duration);
+    if (evolved > 0) {
+      toast.success('Dein Garten wächst! Eine Pflanze hat sich entwickelt! 🌱✨');
+    }
 
     // Notification
     if (Notification.permission === 'granted') {
@@ -139,17 +162,35 @@ const FocusWidget = () => {
         </div>
 
         {!session.active && !isBreak && (
-          <div className="flex gap-2">
-             {[15, 25, 50].map(m => (
-               <button key={m} onClick={() => setTargetDuration(m)}
-                 className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${targetDuration === m ? 'bg-accent text-white shadow-lg shadow-accent/25' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
-                 {m} min
+          <div className="flex flex-col gap-3 items-center w-full">
+            <div className="flex gap-2">
+               {[15, 25, 50].map(m => (
+                 <button key={m} onClick={() => setTargetDuration(m)}
+                   className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${targetDuration === m ? 'bg-accent text-white shadow-lg shadow-accent/25' : 'bg-muted/50 text-muted-foreground hover:bg-muted'}`}>
+                   {m} min
+                 </button>
+               ))}
+            </div>
+
+            <div className="flex items-center gap-2">
+               <button onClick={() => setSoundEnabled(!soundEnabled)} className={`p-2 rounded-full transition-colors ${soundEnabled ? 'bg-accent/10 text-accent' : 'text-muted-foreground hover:bg-muted'}`}>
+                 {soundEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
                </button>
-             ))}
+               {soundEnabled && (
+                 <div className="flex gap-1">
+                   {(['white', 'pink', 'brown'] as const).map(t => (
+                     <button key={t} onClick={() => setSoundType(t)}
+                       className={`w-3 h-3 rounded-full border transition-all ${soundType === t ? 'bg-accent border-accent' : 'bg-transparent border-muted-foreground'}`}
+                       title={t}
+                     />
+                   ))}
+                 </div>
+               )}
+            </div>
           </div>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex gap-4 items-center">
           {!session.active && !isBreak ? (
             <button onClick={handleStart}
               className="h-14 w-14 rounded-full bg-foreground text-background flex items-center justify-center shadow-lg hover:scale-105 active:scale-95 transition-all">
@@ -161,6 +202,10 @@ const FocusWidget = () => {
               <Square className="h-5 w-5 fill-current" />
             </button>
           )}
+
+          <button onClick={() => navigate('/focus')} className="absolute bottom-6 right-6 text-muted-foreground hover:text-foreground opacity-50 hover:opacity-100 transition-opacity" title="Fokus Modus">
+            <Maximize2 className="h-5 w-5" />
+          </button>
         </div>
       </div>
     </div>

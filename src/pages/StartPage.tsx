@@ -16,11 +16,12 @@ import { ChallengeWidget } from '@/components/dashboard/ChallengeWidget';
 import FocusWidget from '@/components/FocusWidget';
 import { QuickCapture } from '@/components/dashboard/QuickCapture';
 import { Pencil, LayoutDashboard } from 'lucide-react';
+import { GardenWidget } from '@/components/dashboard/GardenWidget';
 
 export default function StartPage() {
   const [updateKey, setUpdateKey] = useState(0);
   const [items, setItems] = useState([
-    'header', 'links', 'challenge', 'media', 'progress', 'focus_goal', 'hints', 'timer', 'reflection'
+    'header', 'links', 'challenge', 'garden', 'media', 'progress', 'focus_goal', 'hints', 'timer', 'reflection'
   ]);
   const [editLinks, setEditLinks] = useState(false);
   const [editDashboard, setEditDashboard] = useState(false);
@@ -85,6 +86,7 @@ export default function StartPage() {
           </section>
         );
       case 'challenge': return <ChallengeWidget />;
+      case 'garden': return <GardenWidget />;
       case 'media': return <MediaWidget runningMedia={runningMedia} />;
       case 'progress': return <ProgressWidget completed={completedCount} total={todaysTasks.length} />;
       case 'focus_goal': return <FocusGoalWidget wochenfokus={wochenfokus} setWochenfokus={setWochenfokus} />;
