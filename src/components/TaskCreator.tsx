@@ -17,6 +17,8 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
   const [dueDate, setDueDate] = useState('');
   const [isAdding, setIsAdding] = useState(false);
 
+  const wissenEntries = loadWissen();
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!title.trim()) return;
@@ -103,6 +105,21 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
           <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)}
             className="w-full rounded-xl border border-input bg-background/50 px-3 py-2 text-xs font-medium text-foreground focus:outline-none focus:ring-1 focus:ring-accent h-9" />
         </div>
+      </div>
+
+      <div className="space-y-1.5">
+        <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground ml-1">Verknüpftes Wissen (Optional)</Label>
+        <Select value={knowledgeId} onValueChange={setKnowledgeId}>
+          <SelectTrigger className="h-9 rounded-xl border-input bg-background/50 text-xs font-medium w-full">
+            <SelectValue placeholder="Kein Wissenseintrag" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="none">Kein Wissenseintrag</SelectItem>
+            {wissenEntries.map(w => (
+              <SelectItem key={w.id} value={w.id}>{w.title}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-1.5">

@@ -27,6 +27,22 @@ const navItems = [
 const AppLayout = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const isFocusMode = location.pathname === '/focus';
+
+  useEffect(() => {
+    const savedAccent = localStorage.getItem('clearmind-accent');
+    if (savedAccent) {
+      document.documentElement.style.setProperty('--accent', savedAccent);
+    }
+  }, []);
+
+  if (isFocusMode) {
+    return (
+      <Routes>
+        <Route path="/focus" element={<FocusPage />} />
+      </Routes>
+    );
+  }
 
   useEffect(() => {
     const savedAccent = localStorage.getItem('clearmind-accent');
@@ -68,13 +84,13 @@ const AppLayout = () => {
             const isActive = location.pathname === item.path;
             return (
               <button key={item.path} onClick={() => navigate(item.path)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-full transition-all duration-300 ${
+                className={`flex flex-col items-center justify-center gap-1 py-2 rounded-xl transition-all duration-300 ${
                   isActive
                     ? 'bg-accent text-accent-foreground font-medium shadow-lg shadow-accent/25'
                     : 'text-muted-foreground hover:text-foreground hover:bg-muted/50'
                 }`}>
                 <item.icon className={`h-5 w-5 ${isActive ? 'fill-current' : ''}`} strokeWidth={isActive ? 2.5 : 2} />
-                {isActive && <span className="text-xs tracking-wide uppercase">{item.label}</span>}
+                <span className={`text-[9px] tracking-wide uppercase ${isActive ? 'opacity-100' : 'opacity-70'}`}>{item.label}</span>
               </button>
             );
           })}
