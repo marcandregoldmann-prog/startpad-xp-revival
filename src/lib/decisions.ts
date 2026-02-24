@@ -17,10 +17,13 @@ export interface Decision {
 }
 
 export function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).slice(2);
+  return crypto.randomUUID();
 }
 
-export function calculateResult(pros: Argument[], contras: Argument[]): Pick<Decision, 'proScore' | 'contraScore' | 'result' | 'resultText'> {
+export function calculateResult(
+  pros: Argument[],
+  contras: Argument[],
+): Pick<Decision, 'proScore' | 'contraScore' | 'result' | 'resultText'> {
   const proScore = pros.reduce((sum, a) => sum + a.weight, 0);
   const contraScore = contras.reduce((sum, a) => sum + a.weight, 0);
 
@@ -57,6 +60,6 @@ export function saveDecision(decision: Decision): void {
 }
 
 export function deleteDecision(id: string): void {
-  const decisions = loadDecisions().filter(d => d.id !== id);
+  const decisions = loadDecisions().filter((d) => d.id !== id);
   localStorage.setItem('clearmind-decisions', JSON.stringify(decisions));
 }
