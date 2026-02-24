@@ -42,12 +42,13 @@ export function saveWissenEntry(entry: WissenEntry): void {
 }
 
 export function deleteWissenEntry(id: string): void {
-  const entry = loadWissen().find(e => e.id === id);
+  const allEntries = loadWissen();
+  const entry = allEntries.find(e => e.id === id);
   if (entry?.xpAwarded) {
     const xpAmount = getXPForEntry(entry);
     removeXP(xpAmount);
   }
-  const entries = loadWissen().filter(e => e.id !== id);
+  const entries = allEntries.filter(e => e.id !== id);
   saveWissenAll(entries);
 }
 
