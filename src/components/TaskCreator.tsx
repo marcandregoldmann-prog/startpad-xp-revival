@@ -25,23 +25,9 @@ const TaskCreator = ({ onTaskCreated }: TaskCreatorProps) => {
     e.preventDefault();
     if (!title.trim()) return;
 
-    // Create task with all fields, including optional knowledgeId link if implemented in backend (not yet in createTask, but maybe in future?)
-    // Wait, createTask definition in lib/tasks.ts DOES NOT accept knowledgeId.
-    // If I want to persist it, I need to update createTask or add it to note?
-    // For now, I will stick to what createsTask accepts.
-    // The knowledgeId seems to be a UI feature in main that isn't fully backed by the helper yet?
-    // Or maybe I missed createTask update?
-    // Let's check lib/tasks.ts again... I saw it only had 6 args.
+    const finalKnowledgeId = (knowledgeId && knowledgeId !== 'none') ? knowledgeId : undefined;
 
-    const newTask = createTask(title.trim(), category, xp, repeat, priority, dueDate || undefined);
-
-    // If knowledgeId is set, maybe append to note?
-    if (knowledgeId && knowledgeId !== 'none') {
-        const entry = wissenEntries.find(e => e.id === knowledgeId);
-        if (entry) {
-            newTask.note = `Linked Knowledge: [${entry.title}](/wissen?id=${entry.id})`;
-        }
-    }
+    const newTask = createTask(title.trim(), category, xp, repeat, priority, dueDate || undefined, finalKnowledgeId);
 
     saveTask(newTask);
 
