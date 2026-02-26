@@ -1,4 +1,4 @@
-import { generateId } from './decisions';
+import { generateId } from './utils';
 import { addXP, getToday } from './tasks';
 
 export interface Habit {

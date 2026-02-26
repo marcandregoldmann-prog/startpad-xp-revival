@@ -1,4 +1,4 @@
-import { generateId } from './decisions';
+import { generateId } from './utils';
 
 export interface LinkItem {
   id: string;

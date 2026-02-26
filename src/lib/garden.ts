@@ -1,4 +1,4 @@
-import { generateId } from './decisions';
+import { generateId } from './utils';
 
 export type PlantStage = 'seed' | 'sprout' | 'small' | 'mature' | 'blooming';
 

@@ -1,4 +1,4 @@
-import { generateId } from './decisions';
+import { generateId } from './utils';
 
 export type JournalType = 'reflection' | 'gratitude' | 'idea';
 

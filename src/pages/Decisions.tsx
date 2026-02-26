@@ -3,7 +3,8 @@ import { History, RotateCcw, Check, Scale } from 'lucide-react';
 import ArgumentList from '@/components/ArgumentList';
 import ResultCard from '@/components/ResultCard';
 import HistoryList from '@/components/HistoryList';
-import { Argument, Decision, generateId, calculateResult, loadDecisions, saveDecision } from '@/lib/decisions';
+import { Argument, Decision, calculateResult, loadDecisions, saveDecision } from '@/lib/decisions';
+import { generateId } from '@/lib/utils';
 
 type View = 'decide' | 'history';
 
