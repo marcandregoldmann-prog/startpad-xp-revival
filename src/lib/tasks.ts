@@ -162,7 +162,7 @@ export function saveStats(stats: TaskStats): void {
 }
 
 export function calculateLevel(totalXP: number): number {
-  return Math.floor(totalXP / 100) + 1;
+  return Math.max(1, Math.floor(totalXP / 100) + 1);
 }
 
 export function xpForCurrentLevel(totalXP: number): number {
