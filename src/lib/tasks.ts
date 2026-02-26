@@ -1,4 +1,4 @@
-import { generateId } from './decisions';
+import { generateId } from './utils';
 
 export type TaskCategory = 'Haushalt' | 'Gesundheit' | 'Routine' | 'Sonstiges';
 export type TaskRepeat = 'täglich' | 'wöchentlich' | 'manuell';

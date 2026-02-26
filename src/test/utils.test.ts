@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { generateId } from '../lib/decisions';
+import { generateId } from '../lib/utils';
 
 describe('generateId', () => {
   it('should return a valid UUID string', () => {

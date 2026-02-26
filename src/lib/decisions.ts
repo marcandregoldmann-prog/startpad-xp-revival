@@ -16,10 +16,6 @@ export interface Decision {
   createdAt: string;
 }
 
-export function generateId(): string {
-  return crypto.randomUUID();
-}
-
 export function calculateResult(
   pros: Argument[],
   contras: Argument[],
