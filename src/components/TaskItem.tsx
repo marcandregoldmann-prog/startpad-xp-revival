@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Trash2, Archive, Calendar, Check, MoreVertical, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { type Task, type Subtask, type TaskPriority } from '@/lib/tasks';
-import { cn } from '@/lib/utils';
+import { cn, generateId } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
 import {
   DropdownMenu,
@@ -38,7 +38,7 @@ const TaskItem = ({ task, completed, onComplete, onDelete, onArchive, onUpdate }
 
   const handleAddSubtask = () => {
     if (!newSubtask.trim()) return;
-    const newSub: Subtask = { id: crypto.randomUUID(), title: newSubtask.trim(), completed: false };
+    const newSub: Subtask = { id: generateId(), title: newSubtask.trim(), completed: false };
     onUpdate(task.id, { subtasks: [...(task.subtasks || []), newSub] });
     setNewSubtask('');
   };

@@ -1,4 +1,4 @@
-import { generateId } from './decisions';
+import { generateId } from './utils';
 import { addXP, removeXP } from './tasks';
 
 export type WissenCategory = 'Medien' | 'Projekt';

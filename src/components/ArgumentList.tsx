@@ -1,5 +1,6 @@
 import { Plus, X } from 'lucide-react';
 import { Argument } from '@/lib/decisions';
+import { generateId } from '@/lib/utils';
 
 interface ArgumentListProps {
   type: 'pro' | 'contra';
@@ -12,7 +13,7 @@ const ArgumentList = ({ type, arguments: args, onChange }: ArgumentListProps) =>
   const color = isPro ? 'emerald' : 'rose';
 
   const handleAdd = () => {
-    onChange([...args, { id: crypto.randomUUID(), text: '', weight: 3 }]);
+    onChange([...args, { id: generateId(), text: '', weight: 3 }]);
   };
 
   const handleUpdate = (id: string, text: string, weight: number) => {
