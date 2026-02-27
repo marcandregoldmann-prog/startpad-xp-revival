@@ -72,9 +72,12 @@ const LinksWidget = ({ editMode }: LinksWidgetProps) => {
     <div className="space-y-3">
       {groups.map((group, gIdx) => (
         <div key={group.id} className="group/card overflow-hidden rounded-2xl bg-card border border-white/5 shadow-sm transition-all hover:border-white/10 hover:shadow-md">
-          <button
+          <div
             onClick={() => handleToggle(group.id)}
-            className="w-full flex items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/5"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleToggle(group.id); }}
+            className="w-full flex items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-white/5 cursor-pointer"
           >
             {editMode && (
               <div className="flex flex-col gap-0.5 mr-1">
@@ -103,7 +106,7 @@ const LinksWidget = ({ editMode }: LinksWidgetProps) => {
                 <Trash2 className="h-4 w-4" />
               </button>
             )}
-          </button>
+          </div>
 
           {!group.collapsed && (
             <div className="px-5 pb-4 pt-1 space-y-1 animate-in slide-in-from-top-2 duration-200">

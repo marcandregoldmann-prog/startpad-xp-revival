@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { loadTasks, loadCompletions, getTodaysTasks, isTaskCompletedToday, checkStreakReset, getTodaysXP } from '@/lib/tasks';
 import { loadWissen, getRunningMedia } from '@/lib/wissen';
 import { loadWochenfokus, getKontextHinweise } from '@/lib/focus';
@@ -37,15 +37,15 @@ export default function StartPage() {
 
   // Data Loading
   // We reload these when updateKey changes (re-render)
-  const stats = checkStreakReset();
-  const tasks = loadTasks();
-  const completions = loadCompletions();
-  const todaysTasks = getTodaysTasks(tasks);
-  const completedCount = todaysTasks.filter(t => isTaskCompletedToday(t.id, completions)).length;
-  const todaysXP = getTodaysXP(completions, tasks);
-  const wissenEntries = loadWissen();
-  const runningMedia = getRunningMedia(wissenEntries);
-  const hints = getKontextHinweise();
+  const stats = useMemo(() => checkStreakReset(), [updateKey]);
+  const tasks = useMemo(() => loadTasks(), [updateKey]);
+  const completions = useMemo(() => loadCompletions(), [updateKey]);
+  const todaysTasks = useMemo(() => getTodaysTasks(tasks), [tasks]);
+  const completedCount = useMemo(() => todaysTasks.filter(t => isTaskCompletedToday(t.id, completions)).length, [todaysTasks, completions]);
+  const todaysXP = useMemo(() => getTodaysXP(completions, tasks), [completions, tasks]);
+  const wissenEntries = useMemo(() => loadWissen(), [updateKey]);
+  const runningMedia = useMemo(() => getRunningMedia(wissenEntries), [wissenEntries]);
+  const hints = useMemo(() => getKontextHinweise(), [updateKey]);
 
   // DnD Sensors
   const sensors = useSensors(
