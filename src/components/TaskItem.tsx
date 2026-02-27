@@ -1,8 +1,10 @@
 import { useState } from 'react';
-import { Trash2, Archive, Calendar, Check, MoreVertical, Plus, ChevronDown, ChevronUp } from 'lucide-react';
+import { Trash2, Archive, Calendar, Check, MoreVertical, Plus, ChevronDown, ChevronUp, BookOpen } from 'lucide-react';
 import { type Task, type Subtask, type TaskPriority } from '@/lib/tasks';
+import { loadWissen } from '@/lib/wissen';
 import { cn } from '@/lib/utils';
 import { Textarea } from '@/components/ui/textarea';
+import { useNavigate } from 'react-router-dom';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -28,6 +30,9 @@ const priorityColors: Record<TaskPriority, string> = {
 const TaskItem = ({ task, completed, onComplete, onDelete, onArchive, onUpdate }: TaskItemProps) => {
   const [expanded, setExpanded] = useState(false);
   const [newSubtask, setNewSubtask] = useState('');
+  const navigate = useNavigate();
+
+  const knowledgeEntry = task.knowledgeId ? loadWissen().find(k => k.id === task.knowledgeId) : null;
 
   const handleSubtaskToggle = (subtaskId: string) => {
     // subtasks might be undefined if not initialized
@@ -100,6 +105,19 @@ const TaskItem = ({ task, completed, onComplete, onDelete, onArchive, onUpdate }
             )}
           </div>
           <div className="flex items-center gap-3 mt-0.5">
+            {knowledgeEntry && (
+              <span
+                onClick={(e) => { e.stopPropagation(); navigate('/wissen'); }}
+                className={cn(
+                  "flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full border transition-colors cursor-pointer hover:bg-sky-500/10 hover:text-sky-400 hover:border-sky-500/20",
+                  completed ? "text-muted-foreground border-transparent" : "text-sky-500/70 border-sky-500/10 bg-sky-500/5"
+                )}
+                title={`Verknüpft: ${knowledgeEntry.title}`}
+              >
+                <BookOpen className="h-3 w-3" />
+                <span className="truncate max-w-[80px] sm:max-w-[120px]">{knowledgeEntry.title}</span>
+              </span>
+            )}
              <span className={cn("text-[10px] font-mono transition-colors", completed ? "text-emerald-500/50" : "text-muted-foreground group-hover:text-accent/80")}>
               +{task.xp} XP
             </span>
