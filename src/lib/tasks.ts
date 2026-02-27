@@ -245,8 +245,15 @@ export function checkStreakReset(): TaskStats {
 export function getTodaysXP(completions: TaskCompletion[], tasks: Task[]): number {
   const today = getToday();
   const todayCompletions = completions.filter(c => c.completedAt.startsWith(today));
+
+  if (todayCompletions.length === 0) {
+    return 0;
+  }
+
+  const tasksMap = new Map(tasks.map((t) => [t.id, t] as const));
+
   return todayCompletions.reduce((sum, c) => {
-    const task = tasks.find(t => t.id === c.taskId);
+    const task = tasksMap.get(c.taskId);
     return sum + (task?.xp || 0);
   }, 0);
 }
