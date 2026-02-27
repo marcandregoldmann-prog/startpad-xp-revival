@@ -8,8 +8,7 @@ import {
   isTaskCompletedToday, completeTask, checkStreakReset, deleteTask, updateTask,
   type Task, type TaskCompletion, type TaskStats,
 } from '@/lib/tasks';
-import { BarChart3, Archive, CheckCheck, Sparkles } from 'lucide-react';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { BarChart3, Archive, CheckCheck } from 'lucide-react';
 
 // Error Boundary Component (Simple inline version)
 const ErrorFallback = ({ error, resetErrorBoundary }: { error: Error; resetErrorBoundary: () => void }) => {
@@ -33,12 +32,6 @@ const Tasks = () => {
   const [showStats, setShowStats] = useState(false);
   const [showArchived, setShowArchived] = useState(false);
   const [error, setError] = useState<Error | null>(null);
-
-  // Experimental: Daily Plan state (derived or manual?)
-  // origin/main used 'dailyPlan' but didn't define it in the snippet I saw?
-  // Wait, I saw <Dialog open={!!dailyPlan}... setDailyPlan(null)>
-  // I need to define this state.
-  const [dailyPlan, setDailyPlan] = useState<any[] | null>(null);
 
   const refresh = useCallback(() => {
     try {
@@ -202,31 +195,6 @@ const Tasks = () => {
         </div>
       </div>
 
-      <Dialog open={!!dailyPlan} onOpenChange={(open) => !open && setDailyPlan(null)}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Sparkles className="h-5 w-5 text-indigo-500" />
-              Dein Tagesplan
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 pt-2">
-            {dailyPlan && dailyPlan.length === 0 ? (
-               <p className="text-sm text-muted-foreground">Keine Aufgaben für einen Plan vorhanden.</p>
-            ) : (
-              <div className="relative border-l border-border ml-2 space-y-6 py-2">
-                {dailyPlan?.map((block, i) => (
-                  <div key={i} className="ml-6 relative">
-                    <span className={`absolute -left-[31px] top-1 h-3 w-3 rounded-full border-2 border-background ${block.type === 'focus' ? 'bg-indigo-500' : block.type === 'break' ? 'bg-emerald-500' : 'bg-slate-500'}`} />
-                    <p className="text-xs font-mono text-muted-foreground mb-0.5">{block.time}</p>
-                    <p className="text-sm font-medium">{block.activity}</p>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
     </div>
   );
 };
